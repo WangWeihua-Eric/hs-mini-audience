@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "app-live-pusher-player": "../../../../components/live-pusher-player/app-live-pusher-player"
+  }
+}

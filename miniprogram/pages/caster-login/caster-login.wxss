@@ -1,0 +1,78 @@
+@import '../../style/flex-base.wxss'
+
+Page {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+input {
+    font-size:28rpx !important;
+    font-family:Helvetica !important;
+    color:rgba(255,255,255,1) !important;
+}
+
+.content {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.login-bg {
+    width: 100%;
+    height: 100%;
+}
+
+.sub-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 330rpx 112rpx 196rpx 112rpx;
+}
+
+.title {
+    font-size:60rpx;
+    font-weight: bold;
+    font-family:SourceHanSansCN-Regular,SourceHanSansCN;
+    color: white;
+    width: 100%;
+}
+
+.sub-title {
+    font-size:45rpx;
+    font-family:SourceHanSansCN-Regular,SourceHanSansCN;
+    color: white;
+    width: 100%;
+    margin-top: 20rpx;
+}
+
+.user-phone {
+    width: 100%;
+    margin-top: 120rpx;
+}
+
+.user-phone-input {
+    width: 526rpx;
+    border-bottom: 4rpx solid #FFF;
+}
+
+.user-pw {
+    width: 100%;
+    margin-top: 45rpx;
+}
+
+.login-btn {
+    width:526rpx;
+    height:112rpx;
+    background:rgba(233,85,68,1);
+    font-size:42rpx;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+    letter-spacing:3rpx;
+    margin-top: 68rpx;
+    border-radius: 10rpx;
+}

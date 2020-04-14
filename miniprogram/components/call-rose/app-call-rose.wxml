@@ -1,0 +1,55 @@
+<view class="audience-right f-c-je-as">
+    <view class="bg-bubbles f-c-jc-ac">
+        <view wx:if="{{callTip0}}" class="call-tip-item0">
+            <image class="call-tip" src="../../images/rose-img.png"></image>
+        </view>
+        <view wx:if="{{callTip1}}" class="call-tip-item1">
+            <image class="call-tip" src="../../images/rose-img.png"></image>
+        </view>
+        <view wx:if="{{callTip2}}" class="call-tip-item2">
+            <image class="call-tip" src="../../images/rose-img.png"></image>
+        </view>
+        <view wx:if="{{callTip3}}" class="call-tip-item3">
+            <image class="call-tip" src="../../images/rose-img.png"></image>
+        </view>
+        <view wx:if="{{callTip4}}" class="call-tip-item4">
+            <image class="call-tip" src="../../images/rose-img.png"></image>
+        </view>
+        <view wx:if="{{callTip5}}" class="call-tip-item5">
+            <image class="call-tip" src="../../images/rose-img.png"></image>
+        </view>
+        <view wx:if="{{callTip6}}" class="call-tip-item0">
+            <image class="call-tip" src="../../images/rose-img.png"></image>
+        </view>
+        <view wx:if="{{callTip7}}" class="call-tip-item1">
+            <image class="call-tip" src="../../images/rose-img.png"></image>
+        </view>
+        <view wx:if="{{callTip8}}" class="call-tip-item2">
+            <image class="call-tip" src="../../images/rose-img.png"></image>
+        </view>
+        <view wx:if="{{callTip9}}" class="call-tip-item3">
+            <image class="call-tip" src="../../images/rose-img.png"></image>
+        </view>
+        <view wx:if="{{callTip10}}" class="call-tip-item4">
+            <image class="call-tip" src="../../images/rose-img.png"></image>
+        </view>
+        <view wx:if="{{callTip11}}" class="call-tip-item5">
+            <image class="call-tip" src="../../images/rose-img.png"></image>
+        </view>
+        <view wx:if="{{callTip12}}" class="call-tip-item0">
+            <image class="call-tip" src="../../images/rose-img.png"></image>
+        </view>
+        <view wx:if="{{callTip13}}" class="call-tip-item1">
+            <image class="call-tip" src="../../images/rose-img.png"></image>
+        </view>
+        <view wx:if="{{callTip14}}" class="call-tip-item2">
+            <image class="call-tip" src="../../images/rose-img.png"></image>
+        </view>
+        <view wx:if="{{callTip15}}" class="call-tip-item3">
+            <image class="call-tip" src="../../images/rose-img.png"></image>
+        </view>
+    </view>
+    <view class="send-rose-btn f-jc-ac" bindtap="onSendRose">
+        <image class="send-rose" lazy-load="{{true}}" src="cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/rose-img.png"></image>
+    </view>
+</view>

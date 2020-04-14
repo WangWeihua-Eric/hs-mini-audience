@@ -1,0 +1,21 @@
+<view class='container-box'>
+    <view wx:if="{{noLogin}}" class="content f-jc-ac">
+        <image class="bg-img" src="{{roomInfo.roomCoverImg ? roomInfo.roomCoverImg : 'cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/define.png'}}"></image>
+        <view class="over-content f-c-jc-ac">
+            <image class="user-img" lazy-load="{{true}}" src="{{roomInfo.anchorAvatar ? roomInfo.anchorAvatar : 'cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/define.png'}}"></image>
+            <view class="user-name">{{roomInfo.anchorName ? roomInfo.anchorName : '红松看看吧'}}</view>
+            <view class="tip">{{roomInfo.roomStatus === 0 ? '直播未开始' : roomInfo.roomStatus === 3 ? '直播已结束' : '当前还没有开始课程哦' }}</view>
+            <view class="desc">{{roomInfo.roomStatus === 0 ? roomInfo.desc : roomInfo.roomStatus === 3 ? roomInfo.desc : '' }}</view>
+            <view class="sub-tip">{{roomInfo.roomName ? roomInfo.roomName : '您可以点击下方按钮进入大厅等待'}}</view>
+            <view class="enter-room f-jc-ac" bindtap="onJumpServer">{{roomInfo.roomStatus === 0 ? '查看课表' : roomInfo.roomStatus === 3 ? '返回课表' : roomInfo.anchorAvatar ? '查看课表' : '进入大厅' }}</view>
+        </view>
+    </view>
+
+    <view wx:if="{{!noLogin}}">
+        <mlvb-live-room id="id_liveroom" wx:if="{{showLiveRoom}}" roomid="{{roomID}}" role="{{role}}"
+                        roomname="{{roomName}}" pureaudio="{{pureAudio}}" debug="{{debug}}" muted="{{muted}}"
+                        canLink="{{canLink}}"
+                        beauty="{{beauty}}" template="float" bindRoomEvent="onRoomEvent">
+        </mlvb-live-room>
+    </view>
+</view>

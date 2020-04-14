@@ -1,0 +1,306 @@
+@import '../../../style/flex-base.wxss'
+
+Page {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.content {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.bg-img {
+    width: 750rpx;
+    height: 543rpx;
+}
+
+.over-content {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background:rgba(0, 0, 0, 0.85);
+}
+
+.user-img {
+    width: 126rpx;
+    height: 126rpx;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.user-name {
+    font-size:32rpx;
+    font-family:PingFangSC-Medium,PingFang SC;
+    font-weight:500;
+    color:rgba(238,237,235,1);
+    margin-top: 10rpx;
+}
+
+.tip {
+    font-size:48rpx;
+    font-family:PingFangSC-Semibold,PingFang SC;
+    font-weight:600;
+    color:rgba(255,255,255,1);
+    margin-top: 18rpx;
+}
+
+.desc {
+    font-size:32rpx;
+    font-family:PingFangSC-Regular,PingFang SC;
+    color:rgba(173,173,173,1);
+    margin-top: 6rpx;
+}
+
+.sub-tip {
+    font-size:32rpx;
+    font-family:PingFangSC-Regular,PingFang SC;
+    color:rgba(255,255,255,1);
+    margin-top: 51rpx;
+}
+
+.enter-room {
+    width:240rpx;
+    height:76rpx;
+    background:rgba(126,205,105,1);
+    border-radius:38rpx;
+    font-size:32rpx;
+    font-family:PingFangSC-Medium,PingFang SC;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+    margin-top: 187rpx;
+}
+
+.audience-content {
+    position:absolute;
+    bottom:0;
+    height:100%;
+    width:100%;
+    box-sizing: border-box;
+    padding: 160rpx 20rpx 47rpx 16rpx;
+}
+
+.audience-header {
+    width: 100%;
+}
+
+.audience-header-left {
+    width:365rpx;
+    height:80rpx;
+    background:rgba(0,0,0,0.25);
+    border-radius:45rpx;
+}
+
+.audience-teacher-img {
+    width:68rpx;
+    height:68rpx;
+    border-radius: 50%;
+    margin-left: 6rpx;
+    overflow: hidden;
+}
+
+.audience-teacher-info {
+    height: 100%;
+    margin-left: 4rpx;
+}
+
+.audience-teacher-name {
+    font-size:28rpx;
+    font-family:PingFangSC-Medium,PingFang SC;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+}
+
+.audience-teacher-tag {
+    font-size:26rpx;
+    font-family:PingFangSC-Regular,PingFang SC;
+    color:rgba(255,255,255,1);
+}
+
+.add-action-img {
+    width: 48rpx;
+    height: 48rpx;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 14rpx;
+}
+
+.audience-user-img-list {
+    margin-right: 11rpx;
+}
+
+.audience-user-rank {
+    height: 100%;
+    margin-left: 6rpx;
+}
+
+.audience-user-img {
+    width: 56rpx;
+    height: 56rpx;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.audience-user-tag {
+    width: 62rpx;
+    height: 21rpx;
+    border-radius: 10.5rpx;
+    margin-top: -10rpx;
+}
+
+.switch-window-info {
+    width: 100rpx;
+    height: 100rpx;
+}
+
+.switch-window-btn {
+    width: 84rpx;
+    height: 84rpx;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.audience-bottom {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
+.share-live {
+    width: 84rpx;
+    height: 84rpx;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-left: 21rpx;
+    margin-right: 30rpx;
+}
+
+.audience-input {
+    width:380rpx;
+    height:84rpx;
+    background:rgba(0,0,0,0.25);
+    border-radius:42rpx;
+    box-sizing: border-box;
+    padding-left: 32rpx;
+}
+
+.audience-real-input {
+    width:316rpx;
+    height:84rpx;
+    background:rgba(0,0,0,0);
+    font-size:28rpx;
+    font-family:SourceHanSansCN-Normal,SourceHanSansCN;
+    color:rgba(186,182,182,1);
+}
+
+.audience-input-ph {
+    font-size:28rpx;
+    font-family:SourceHanSansCN-Normal,SourceHanSansCN;
+    color:rgba(186,182,182,1);
+}
+
+.send-rose {
+    width: 84rpx;
+    height: 84rpx;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.get-user-info-content {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.container-box {
+    position: relative;
+    background-image: url(https://mc.qcloudimg.com/static/img/7da57e0050d308e2e1b1e31afbc42929/bg.png);
+    background-color: #333;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+    width: 100vw;
+}
+
+.center {
+  position: absolute;
+  left: calc(50vw - 55px);
+  top: calc(50vh - 55px);
+  width: 110px;
+  height: 110px;
+}
+
+
+.operate {
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  right: 0;
+  left: 0;
+  bottom: 3vh;
+  width: fit-content;
+  height: 50px;
+}
+
+.operate-nolink {
+  position: absolute;
+  right: 0;
+  left: 0;
+  width: fit-content;
+  height: 80px;
+}
+
+.img-box {
+  position: relative;
+  display:inline-block;
+  height: 50px;
+  width: 80px;
+  vertical-align: middle;
+}
+
+.img-view {
+  position: relative;
+  display: block;
+  width: 50px;
+  height: 50px;
+}
+
+.img-box-big {
+  position: relative;
+  display:inline-block;
+  height: 60px;
+  width: 60px;
+  padding-left: 40px;
+  vertical-align: middle;
+}
+
+.img-view-big {
+  position: relative;
+  display: block;
+  width: 60px;
+  height: 60px;
+}
+
+.img-box-small {
+  position: relative;
+  display:inline-block;
+  margin-left: calc(100vw - 80px - 50px - 80px);
+  height: 50px;
+  width: 50px;
+  vertical-align: middle;
+}
+
+.img-view-small {
+  position: relative;
+  display: block;
+  width: 50px;
+  height: 50px;
+}

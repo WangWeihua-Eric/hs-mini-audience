@@ -1,0 +1,10 @@
+<view class="card-content f-js-ac">
+    <image class="room-img" lazy-load="{{true}}" src="{{roomData.roomCoverImg}}"></image>
+    <view class="room-info f-c-jb-as">
+        <view class="room-title">{{roomData.roomName}}</view>
+        <view class="f-c-jc-as">
+            <view class="room-time">{{roomData.openRoomTime}}</view>
+            <view class="room-tip">提前15分钟可以进入房间</view>
+        </view>
+    </view>
+</view>

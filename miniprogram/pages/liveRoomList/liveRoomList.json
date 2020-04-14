@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "房间大厅",
+  "navigationStyle": "default",
+  "navigationBarBackgroundColor": "#F6F6F6",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+    "app-live-room-item-card": "./components/liveRoomItemCard/app-live-room-item-card",
+    "van-toast": "@vant/weapp/toast/index"
+  }
+}

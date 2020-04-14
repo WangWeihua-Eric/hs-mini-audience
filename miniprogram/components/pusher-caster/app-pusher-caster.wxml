@@ -1,0 +1,85 @@
+<view class="caster-content">
+    <!--  直播预备  -->
+    <!--    <view wx:if="{{pusherStatus === 1}}" class="pre-push f-c-je-ac">-->
+    <view wx:if="{{pusherStatus === 1 && playStatus === 0}}" class="pre-push f-c-je-ac">
+        <view class="start-btn f-jc-ac" bindtap="onPlayLive">开始</view>
+        <view class="caster-bottom f-je-ac">
+            <image class="bottom-util" lazy-load="{{true}}"
+                   src="{{beauty === 5 ? 'cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/beauty.png' : 'cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/cuty.png'}}"
+                   bindtap="onChangeBeauty"></image>
+            <image class="bottom-util" lazy-load="{{true}}"
+                   src="{{frontCamera ? 'cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/switch-look.png' : 'cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/back-lock.png'}}"
+                   bindtap="onSwitchCameraEvent"></image>
+        </view>
+    </view>
+
+    <!--  直播倒计时  -->
+    <view wx:if="{{playStatus === 2}}" class="ready-play f-jc-ac">
+        <view class="ready-text f-jc-ac">
+            {{readyTime}}
+        </view>
+    </view>
+
+    <view wx:if="{{playStatus === 3}}" class="play-content f-c-jb-ac">
+        <view class="play-header f-jb-ac">
+            <view class="back-btn" bindtap="onBackBtn">
+                <van-icon name="arrow-left" />
+            </view>
+        </view>
+        <view class="play-content-bottom f-c-je-ac">
+            <view class="play-message f-jb-ae">
+                <view class="live-list-content">
+                    <scroll-view wx:if="{{showMessage}}" class="scroll-content f-c-je-as" scroll-y="{{true}}"
+                                 scroll-into-view="{{toIndex}}" scroll-with-animation="{{true}}"
+                                 enable-back-to-top="{{true}}">
+                        <view class="live-text-item" wx:for="{{roomTextList}}" wx:for-item="item" wx:for-index="index"
+                              wx:key="index" id="text-{{index}}">
+                            <text wx:if="{{item.userName}}">{{item.userName}}：</text>
+                            <text class="text-msg">{{item.message}}</text>
+                        </view>
+                    </scroll-view>
+                </view>
+                <view wx:if="{{!inLink}}" class="wait-link f-c-jc-ac" bindtap="onShowSheet">
+                    <view class="wait-link-number" style="color: {{linkWiteList.length > 0 ? 'rgba(255,99,99,1)' : 'rgba(255,255,255,1)'}}">{{linkWiteList.length}}</view>
+                    <view class="wait-lint-text">等待连麦</view>
+                </view>
+            </view>
+            <view class="play-util f-jb-ac">
+                <view wx:if="{{inLink}}"></view>
+                <image wx:if="{{!inLink}}" class="bottom-util" lazy-load="{{true}}"
+                       src="{{showMessage ? 'cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/show-message.png' : 'cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/not-show-message.png'}}"
+                       bindtap="onShowMessage"></image>
+                <view class="f-je-ac">
+                    <image wx:if="{{!inLink}}" class="bottom-util" lazy-load="{{true}}"
+                           src="{{beauty === 5 ? 'cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/beauty.png' : 'cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/cuty.png'}}"
+                           bindtap="onChangeBeauty"></image>
+                    <view wx:if="{{inLink}}" class="close-link f-jc-ac" bindtap="onCloseLink">挂断</view>
+                    <image class="bottom-util" lazy-load="{{true}}"
+                           src="{{frontCamera ? 'cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/switch-look.png' : 'cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/back-lock.png'}}"
+                           bindtap="onSwitchCameraEvent"></image>
+                </view>
+            </view>
+        </view>
+    </view>
+
+    <van-action-sheet bgColor="{{bgColor}}" show="{{ show }}" overlay="{{false}}" bind:close="onCloseSheet">
+        <view class="sheet-content f-c-je-ac">
+            <view class="sheet-title f-js-ac">当前有 {{linkWiteList.length}} 人申请连麦</view>
+            <view class="join-item f-jb-ac" wx:for="{{linkWiteList}}" wx:for-item="item" wx:for-index="index" wx:key="index">
+                <view class="f-js-ac">
+                    <view class="item-index">{{index + 1}}</view>
+                    <image class="item-user-img" src="{{item.avatar}}"></image>
+                    <view class="item-user-info f-c-js-ac">
+                        <view class="item-user-name">{{item.nick}}</view>
+                        <view class="item-join-type">视频申请</view>
+                    </view>
+                </view>
+                <view class="f-je-ac">
+                    <view class="item-resove f-jc-ac" bindtap="onResolveLinkEvent" data-value="{{item}}">接受</view>
+                    <view class="item-reject f-jc-ac" bindtap="onRejectLinkEvent" data-value="{{item}}">拒绝</view>
+                </view>
+            </view>
+            <view class="hidden-close-sheet f-jc-ac" bind:tap="onCloseSheet">全部挂起</view>
+        </view>
+    </van-action-sheet>
+</view>

@@ -1,0 +1,185 @@
+@import '../../style/flex-base.wxss'
+
+.audience-right {
+    height: 100%;
+    width: 100%;
+}
+
+.bg-bubbles {
+    width: 100%;
+    position: relative;
+}
+
+.call-tip {
+    width: 53rpx;
+    height: 86rpx;
+}
+
+.send-rose {
+    width: 34rpx;
+    height: 55rpx;
+}
+
+.send-rose-btn {
+    width: 84rpx;
+    height: 84rpx;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: white;
+}
+
+.call-tip-item0 {
+    width: 53rpx;
+    height: 86rpx;
+    position: absolute;
+    bottom: 0;
+    animation: vertical-animation 1.4s linear forwards;
+}
+
+@keyframes vertical-animation {
+    0% {
+        transform: translateY(0px);
+    }
+    100% {
+        transform: translateY(-100px);
+    }
+}
+
+
+.call-tip-item1 {
+    width: 53rpx;
+    height: 86rpx;
+    position: absolute;
+    bottom: 0;
+    animation: hor-animation 1.4s linear forwards;
+}
+
+@keyframes hor-animation {
+    0% {
+        transform: translate(0px, 0px);
+        transform: scale(0);
+    }
+    10% {
+        transform: scale(1);
+    }
+    25% {
+        transform: translate(5px, -25px);
+    }
+    50% {
+        transform: translate(0px, -50px);
+    }
+    75% {
+        transform: translate(-5px, -75px);
+    }
+    100% {
+        transform: translate(0px, -100px);
+    }
+}
+
+.call-tip-item2 {
+    width: 53rpx;
+    height: 86rpx;
+    position: absolute;
+    bottom: 0;
+    animation: hor-animation1 1.4s linear forwards;
+}
+
+@keyframes hor-animation1 {
+    0% {
+        transform: translate(0px, 0px);
+        transform: scale(0);
+    }
+    10% {
+        transform: scale(1);
+    }
+    33% {
+        transform: translate(10px, -33px);
+    }
+    66% {
+        transform: translate(5px, -66px);
+    }
+    100% {
+        transform: translate(0px, -100px);
+    }
+}
+
+.call-tip-item3 {
+    width: 53rpx;
+    height: 86rpx;
+    position: absolute;
+    bottom: 0;
+    animation: hor-animation2 1.4s linear forwards;
+}
+
+@keyframes hor-animation2 {
+    0% {
+        transform: translate(0px, 0px);
+        transform: scale(0);
+    }
+    10% {
+        transform: scale(1);
+    }
+    33% {
+        transform: translate(-10px, -33px);
+    }
+    66% {
+        transform: translate(-5px, -66px);
+    }
+    100% {
+        transform: translate(3px, -100px);
+    }
+}
+
+.call-tip-item4 {
+    width: 53rpx;
+    height: 86rpx;
+    position: absolute;
+    bottom: 0;
+    animation: hor-animation3 1.2s linear forwards;
+}
+
+@keyframes hor-animation3 {
+    0% {
+        transform: translate(0px, 0px);
+        transform: scale(0);
+    }
+    10% {
+        transform: scale(1);
+    }
+    33% {
+        transform: translate(10px, -33px);
+    }
+    66% {
+        transform: translate(5px, -66px);
+    }
+    100% {
+        transform: translate(0px, -100px);
+    }
+}
+
+.call-tip-item5 {
+    width: 53rpx;
+    height: 86rpx;
+    position: absolute;
+    bottom: 0;
+    animation: hor-animation4 1.2s linear forwards;
+}
+
+@keyframes hor-animation4 {
+    0% {
+        transform: translate(0px, 0px);
+        transform: scale(0);
+    }
+    10% {
+        transform: scale(1);
+    }
+    33% {
+        transform: translate(-5px, -33px);
+    }
+    66% {
+        transform: translate(-10px, -66px);
+    }
+    100% {
+        transform: translate(-6px, -100px);
+    }
+}

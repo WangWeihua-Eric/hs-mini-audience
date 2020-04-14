@@ -1,0 +1,22 @@
+{
+  "pages": [
+    "pages/mlvb-live-room-demo/live-room-page/room",
+    "pages/caster-login/caster-login",
+    "pages/liveRoomList/liveRoomList"
+  ],
+  "networkTimeout": {
+    "request": 60000
+  },
+  "window": {
+    "backgroundColor": "#888",
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#000",
+    "navigationBarTitleText": "红松看看吧",
+    "navigationBarTextStyle": "white",
+    "navigationStyle": "custom"
+  },
+  "sitemapLocation": "sitemap.json",
+  "navigateToMiniProgramAppIdList": [
+    "wxa7740225caabc3ea"
+  ]
+}

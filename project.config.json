@@ -1,0 +1,91 @@
+{
+	"miniprogramRoot": "miniprogram/",
+	"cloudfunctionRoot": "cloudfunctions/",
+	"setting": {
+		"urlCheck": true,
+		"es6": true,
+		"enhance": true,
+		"postcss": true,
+		"minified": true,
+		"newFeature": true,
+		"coverView": true,
+		"nodeModules": true,
+		"autoAudits": false,
+		"showShadowRootInWxmlPanel": true,
+		"scopeDataCheck": false,
+		"checkInvalidKey": true,
+		"checkSiteMap": true,
+		"uploadWithSourceMap": true,
+		"babelSetting": {
+			"ignore": [],
+			"disablePlugins": [],
+			"outputPath": ""
+		}
+	},
+	"libVersion": "2.10.4",
+	"appid": "wxe347be7e0dda5309",
+	"projectname": "hs-mini-audience",
+	"simulatorType": "wechat",
+	"simulatorPluginLibVersion": {},
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"plugin": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"list": []
+		},
+		"gamePlugin": {
+			"current": -1,
+			"list": []
+		},
+		"miniprogram": {
+			"current": 0,
+			"list": [
+				{
+					"id": 0,
+					"name": "pages/liveHouse/liveHouse",
+					"pathName": "pages/liveHouse/liveHouse",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 1,
+					"name": "主播登录",
+					"pathName": "pages/caster-login/caster-login",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/home-page/main",
+					"pathName": "pages/home-page/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 3,
+					"name": "跳入直播间带参数",
+					"pathName": "pages/mlvb-live-room-demo/live-room-page/room",
+					"query": "userId=wxun_ooWx4uPbe3vmNdKVBXcNR6EzlYG0&userName=胖🐟🐴&userAvatar=https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eokG03icFicBSap34xvOpiaDM4lenInBILztHCyg08nHN4Y8Vtu3zIaPXGcN0ickGicr07dXS1nZ8XiajAw/132&roomID=room_lec1_c116&roomName=给手机瘦瘦身&sessionId=409624684053745664",
+					"scene": null
+				},
+				{
+					"id": 4,
+					"name": "跳进直播间无参数",
+					"pathName": "pages/mlvb-live-room-demo/live-room-page/room",
+					"query": "",
+					"scene": null
+				}
+			]
+		}
+	}
+}

@@ -1,0 +1,96 @@
+<view class="audience-content f-c-js-ac" bindtap="onCloseSheet">
+    <view wx:if="{{roomInfoData && roomInfoData.anchorAvatar}}" class="audience-header f-jb-ac">
+        <view class="audience-header-left f-jb-ac">
+            <view class="f-js-ac">
+                <image class="audience-teacher-img" lazy-load="{{true}}"
+                       src="{{roomInfoData.anchorAvatar}}"></image>
+                <view class="audience-teacher-info f-c-jc-as">
+                    <view class="audience-teacher-name">{{roomInfoData.anchorName}}</view>
+                    <view class="audience-teacher-tag">{{roomInfoData.anchorDesc}}</view>
+                </view>
+            </view>
+            <image wx:if="{{false}}" class="add-action-img" lazy-load="{{true}}"
+                   src="cloud://live-house-nodecloud.6c69-live-house-nodecloud-1301615752/add-action.png"></image>
+        </view>
+        <view class="f-je-ac">
+            <view class="audience-user-img-list f-je-ac">
+                <view wx:for="{{userImgList}}" wx:for-item="item" wx:for-index="index" wx:key="index"
+                      class="audience-user-rank f-c-jc-ac">
+                    <image class="audience-user-img" lazy-load="{{true}}" src="{{item}}"></image>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="audience-bottom f-jb-ae">
+        <view class="audience-bottom-info f-c-je-as">
+            <view class="live-list-content">
+                <scroll-view class="scroll-content f-c-je-as" scroll-y="{{true}}" scroll-into-view="{{toIndex}}"
+                             scroll-with-animation="{{true}}" enable-back-to-top="{{true}}">
+                    <view class="live-text-item" wx:for="{{roomTextList}}" wx:for-item="item" wx:for-index="index"
+                          wx:key="index" id="text-{{index}}">
+                        <text wx:if="{{item.userName}}">{{item.userName}}：</text>
+                        <text class="text-msg">{{item.message}}</text>
+                    </view>
+                </scroll-view>
+            </view>
+
+            <view wx:if="{{!requestLinkOk}}" class="f-js-ac">
+                <view class="input-temp" bindtap="onClickInput">
+                    输入讨论内容或提问
+                </view>
+
+                <view class="pre-link f-jc-ac" catch:tap="onLinkTeacher">{{canLink ? '申请连麦' : '暂停连麦中'}}</view>
+            </view>
+            <view wx:if="{{requestLinkOk}}" class="call-down f-jc-ac">
+                <view class="call-down-btn f-jc-ac" catch:tap="onCallDown">挂断</view>
+            </view>
+        </view>
+        <view class="rose-btn f-jc-ae" hidden="{{requestLinkOk}}" bindtap="onSendRose">
+            <app-call-rose id="id_sendrose"></app-call-rose>
+        </view>
+    </view>
+
+    <view hidden="{{!focusInput}}" class="real-input f-jc-ac" style="bottom: {{keyBoardHeight}}px">
+        <van-field
+                class="real-input-border"
+                focus="{{focusInput}}"
+                confirm-type="send"
+                adjust-position="{{false}}"
+                cursor-spacing="0"
+                custom-style="width:100%; height:84rpx; background:rgba(235,235,235,1); border-radius:42rpx; box-sizing: border-box; padding-left: 32rpx; font-size:32rpx; font-family:SourceHanSansCN-Medium,SourceHanSansCN; color:rgba(204,204,204,1); display: flex; justify-content: flex-start; align-items: center;"
+                value="{{ value }}"
+                placeholder="输入讨论内容或提问"
+                border="{{ false }}"
+                bind:confirm="onConfirm"
+                bind:focus="onFocus"
+                bind:blur="onBlur"
+        />
+    </view>
+
+    <van-action-sheet bgColor="{{bgColor}}" show="{{ show }}" overlay="{{false}}" bind:close="onCloseSheet">
+        <view wx:if="{{!inCallLink}}" class="sheet-content f-c-je-ac">
+            <view class="sheet-title f-c-jc-as">
+                <view>和老师连线</view>
+                <view class="sub-sheet-text">您前边还有 {{inWite ? index : linkWiteList.length}} 人</view>
+            </view>
+            <view wx:if="{{!linkWiteList.length}}" class="sheet-sub-tip">快和老师当面聊聊吧...</view>
+            <view wx:else class="link-content">
+                <view wx:for="{{linkWiteList}}" wx:for-item="item" wx:for-index="index" wx:key="index" class="user-link-item f-jb-ac">
+                    <view class="f-js-ac">
+                        <view class="item-order">{{item.order}}</view>
+                        <image class="item-user-img" src="{{item.avatar}}"></image>
+                        <view class="item-user-name">{{item.nick}}</view>
+                    </view>
+                    <view class="item-link-status">等待中</view>
+                </view>
+            </view>
+            <view wx:if="{{!inWite}}" class="hidden-close-sheet f-jc-ac" catch:tap="onClickLink">免费连线</view>
+            <view wx:if="{{inWite}}" class="cancel-sheet f-jc-ac" catch:tap="onCancelLink">取消连线</view>
+        </view>
+        <view wx:if="{{inCallLink}}" class="sheet-content f-c-je-ac">
+            <view class="in-link-tip">老师通过后就能开始连麦啦</view>
+            <view class="call-time">{{callTime}}</view>
+            <view class="hidden-close-sheet f-jc-ac" catch:tap="onCloseSheet">我知道了</view>
+        </view>
+    </van-action-sheet>
+</view>

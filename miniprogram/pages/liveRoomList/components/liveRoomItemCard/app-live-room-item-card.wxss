@@ -1,0 +1,46 @@
+@import '../../../../style/flex-base.wxss'
+
+.card-content {
+    width:656rpx;
+    height:216rpx;
+    background:rgba(244,244,244,1);
+    box-shadow:0rpx 2rpx 2rpx 0rpx rgba(0,0,0,0.04);
+    border-radius:8rpx;
+    box-sizing: border-box;
+    padding: 18rpx 22rpx;
+}
+
+.room-img {
+    width: 308rpx;
+    height: 180rpx;
+    border-radius: 11rpx;
+    overflow: hidden;
+}
+
+.room-info {
+    box-sizing: border-box;
+    padding: 10rpx 0 12rpx 13rpx;
+}
+
+.room-title {
+    font-size:32rpx;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:rgba(51,51,51,1);
+    margin-bottom: 40rpx;
+}
+
+.room-time {
+    font-size:32rpx;
+    font-family:SourceHanSansCN-Bold,SourceHanSansCN;
+    font-weight:bold;
+    color:rgba(233,85,68,1);
+}
+
+.room-tip {
+    font-size:24rpx;
+    font-family:SourceHanSansCN-Regular,SourceHanSansCN;
+    color:rgba(153,153,153,1);
+    margin-top: 8rpx;
+    width: 100%;
+}

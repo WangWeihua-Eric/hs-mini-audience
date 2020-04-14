@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "app-player-audience": "../player-audience/app-player-audience",
+    "app-pusher-caster": "../pusher-caster/app-pusher-caster"
+  }
+}

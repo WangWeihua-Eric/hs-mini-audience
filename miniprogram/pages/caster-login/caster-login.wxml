@@ -1,0 +1,35 @@
+<view class="content">
+    <image class="login-bg" src="cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/login-bg.png"></image>
+    <view class="sub-content f-c-js-ac">
+        <view class="title f-js-ac">{{title}}</view>
+        <view class="sub-title f-js-ac">{{subtitle}}</view>
+        <view class="user-phone f-js-ac">
+            <view class="user-phone-input f-js-ac">
+                <van-field
+                        placeholder-style="font-size:28rpx; font-family:Helvetica; color:rgba(255,255,255,1);"
+                        custom-style="background-color: rgba(0, 0, 0, 0);"
+                        value="{{ phoneValue }}"
+                        placeholder="请输入手机号"
+                        border="{{ false }}"
+                        bind:change="onPhChange"
+                />
+            </view>
+        </view>
+        <view class="user-pw f-js-ac">
+            <view class="user-phone-input f-js-ac">
+                <van-field
+                        placeholder-style="font-size:28rpx; font-family:Helvetica; color:rgba(255,255,255,1);"
+                        custom-style="background-color: rgba(0, 0, 0, 0);"
+                        value="{{ pwValue }}"
+                        password="{{true}}"
+                        placeholder="请输入密码"
+                        border="{{ false }}"
+                        bind:change="onPwChange"
+                />
+            </view>
+        </view>
+        <view class="login-btn f-jc-ac" bindtap="toLoginBtn">登录</view>
+    </view>
+
+    <van-toast id="van-toast" />
+</view>

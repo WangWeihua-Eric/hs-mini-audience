@@ -1,0 +1,232 @@
+@import '../../style/flex-base.wxss'
+
+.caster-content {
+    height: 100%;
+    width: 100%;
+/*    background-color: white;*/
+}
+
+.pre-push {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 46rpx 38rpx;
+}
+
+.start-btn {
+    width: 526rpx;
+    height: 112rpx;
+    background: rgba(233, 85, 68, 1);
+    font-size: 42rpx;
+    font-family: SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 1);
+    letter-spacing: 3rpx;
+}
+
+.caster-bottom {
+    width: 100%;
+    margin-top: 50rpx;
+}
+
+.bottom-util {
+    width: 100rpx;
+    height: 100rpx;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-left: 39rpx;
+}
+
+.close-link {
+    width: 460rpx;
+    height: 100rpx;
+    border-radius: 50rpx;
+    background-color: #E95544;
+    font-size:36rpx;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+    margin-right: -19rpx;
+}
+
+.ready-play {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.ready-text {
+    font-size: 220rpx;
+    font-family: SourceHanSansCN-Bold,SourceHanSansCN;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 1);
+    letter-spacing: 5rpx;
+}
+
+.play-content {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 90rpx 29rpx 46rpx 18rpx;
+}
+
+.play-header {
+    width: 100%;
+}
+
+.back-btn {
+    font-size: 60rpx;
+    color: white;
+}
+
+.play-content-bottom {
+    width: 100%;
+    height: 100%;
+}
+
+.play-util {
+    width: 100%;
+}
+
+.play-message {
+    width: 100%;
+    margin-bottom: 61rpx;
+}
+
+.wait-link {
+    width:166rpx;
+    height:159rpx;
+    background:rgba(0,0,0,0.4);
+    border-radius:20rpx;
+    z-index: 1;
+}
+
+.wait-link-number {
+    font-size:72rpx;
+    font-family:PingFangSC-Semibold,PingFang SC;
+    font-weight:600;
+    color:rgba(255,255,255,1);
+}
+
+.wait-lint-text {
+    font-size:32rpx;
+    font-family:SourceHanSansCN-Regular,SourceHanSansCN;
+    color:rgba(255,255,255,1);
+}
+
+.live-list-content {
+    max-height: 369rpx;
+    box-sizing: border-box;
+    padding-left: 9rpx;
+    overflow: scroll;
+}
+
+.scroll-content {
+    max-height: 369rpx;
+}
+
+.live-text-item {
+    max-width: 460rpx;
+    background: rgba(0, 0, 0, 0.29);
+    border-radius: 30rpx;
+    box-sizing: border-box;
+    padding: 16rpx;
+    font-size: 30rpx;
+    font-family: SourceHanSansCN-Normal,SourceHanSansCN;
+    color: rgba(245, 185, 83, 1);
+    margin-bottom: 10rpx;
+}
+
+.text-msg {
+    color: #FFFFFF;
+}
+
+.sheet-content {
+    box-sizing: border-box;
+    padding: 73rpx 29rpx 28rpx 29rpx;
+    width: 100%;
+}
+
+.sheet-title {
+    font-size:42rpx;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+    box-sizing: border-box;
+    padding: 0 0 60rpx 2rpx;
+    border-bottom: 1rpx solid #484647;
+    width: 100%;
+}
+
+.hidden-close-sheet {
+    background-color: #E95544;
+    border-radius: 10rpx;
+    width: 692rpx;
+    height: 84rpx;
+    font-size:32rpx;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+    margin-top: 49rpx;
+}
+
+.join-item {
+    padding: 23rpx 10rpx 23rpx 14rpx;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.item-index {
+    font-size:30rpx;
+    font-family:PingFangSC-Medium,PingFang SC;
+    font-weight:500;
+    color:rgba(178,178,178,1);
+}
+
+.item-user-img {
+    width: 64rpx;
+    height: 64rpx;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-left: 34rpx;
+}
+
+.item-user-info {
+    margin-left: 30rpx;
+}
+
+.item-user-name {
+    font-size:30rpx;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+}
+
+.item-join-type {
+    font-size:30rpx;
+    font-family:SourceHanSansCN-Regular,SourceHanSansCN;
+    color:rgba(72,191,78,1);
+}
+
+.item-resove {
+    width:129rpx;
+    height:62rpx;
+    background:rgba(255,255,255,1);
+    border-radius:10rpx;
+    font-size:28rpx;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:rgba(0,0,0,1);
+}
+
+.item-reject {
+    width:129rpx;
+    height:62rpx;
+    border-radius:10rpx;
+    border:1rpx solid rgba(255,255,255,1);
+    font-size:28rpx;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+    margin-left: 14rpx;
+}
