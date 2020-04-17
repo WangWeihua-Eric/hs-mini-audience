@@ -1,16 +1,25 @@
-import {backJump, getSetting, jumpNewMini, pageJump} from "../../../utils/wx-utils/wx-base-utils";
+import {
+    backJump, getSetting,
+    getStorage,
+    getUserInfo,
+    jumpNewMini,
+    pageJump
+} from "../../../utils/wx-utils/wx-base-utils";
 import {formatTime, formatTimeHM} from "../../../utils/time-utils/time-utils";
 import {UserBase} from "../../../utils/user-utils/user-base";
 import {getWithWhere} from "../../../utils/wx-utils/wx-db-utils";
 import {RoomService} from "../../../service/roomService";
+import {RoomInfoData} from "../../../data/room-info-data";
+import {initSessionId, isSessionReady} from "../../../utils/user-utils/user-base-utils";
 
 const liveroom = require('../../components/mlvb-live-room/mlvbliveroomcore.js')
 
 const app = getApp()
 const roomService = new RoomService()
 const userBase = new UserBase()
+const roomInfoData = new RoomInfoData()
 
-let loadOptions = {}
+let globalOptions = {}
 
 Page({
     component: null,
@@ -36,19 +45,192 @@ Page({
         statusBarHeight: app.globalData.statusBarHeight,
         inputFocus: false,
         scopeUserInfo: true,
-        noLogin: false,
         roomInfo: {},
-        canLink: false
+        canLink: false,
+        lessonOpen: true,
+        show: false
     },
 
-    refresh(options) {
+    initInfo(options) {
+        isSessionReady().then(() => {
+            const userInfo = userBase.getGlobalData()
+            const userId = userInfo.userId
+            const sessionId = userInfo.sessionId
+
+            getUserInfo().then(userData => {
+                const userDataInfo = userData.userInfo
+                const userName = userDataInfo.nickName
+                const userAvatar = userDataInfo.avatarUrl
+                const roomID = options.roomID
+                const roomName = options.roomName
+                this.userEnterRoom(roomID, userId, userName, userAvatar, roomName, sessionId)
+            })
+        })
+    },
+
+    onLoad: function (options) {
+        const role = options.type === 'create' ? 'anchor' : 'audience'
+
+        if (role !== 'audience') {
+            //  主播
+            const roomID = options.roomID
+            const roomName = options.roomName
+            const userName = options.userName
+            this.setData({
+                roomID: roomID,
+                roomName: roomName,
+                userName: userName,
+                role: role,
+                showLiveRoom: true
+            }, function () {
+                this.start();
+            })
+        } else {
+            //  观众
+            globalOptions = options
+
+            const roomID = options.roomID
+
+            if (roomID) {
+                this.checkUserInfo()
+            } else {
+                this.checkIsLooked()
+            }
+        }
+    },
+
+    checkUserInfo() {
+        getSetting('scope.userInfo').then(res => {
+            if (res) {
+                //  已授权
+                initSessionId()
+                this.initInfo(globalOptions)
+            } else {
+                //  未授权
+                this.setData({
+                    show: true
+                })
+            }
+        })
+    },
+
+    checkIsLooked() {
+        getStorage('isLooked').then(roomId => {
+            globalOptions.roomID = roomId
+            this.checkUserInfo()
+        }).catch(() => {
+            //  未观看过
+            getWithWhere('inreview', {position: 'inreview'}).then(inReviewRes => {
+                if (inReviewRes.length) {
+                    const inReviewInfo = inReviewRes[0]
+                    if (inReviewInfo.inreview) {
+                        //  审核中
+                        this.setData({
+                            lessonOpen: false
+                        })
+                    } else {
+                        //  未审核
+                        this.toLogin()
+                    }
+                } else {
+                    //  未审核
+                    this.toLogin()
+                }
+            }).catch(() => {
+                //  未审核
+                this.toLogin()
+            })
+        })
+    },
+
+    /**
+     * 生命周期函数--监听页面显示
+     */
+    onShow: function () {
+        if (this.data.shouldExit) {
+            wx.showModal({
+                title: '提示',
+                content: "收到退房通知",
+                showCancel: false,
+                complete: function () {
+                    wx.navigateBack({delta: 1});
+                }
+            });
+        }
+        var self = this;
+        self.component && self.component.resume();
+    },
+
+    userEnterRoom(roomId, userId, userName, userAvatar, roomName, sessionId) {
+        wx.setStorage({
+            key: "isLooked",
+            data: roomId
+        })
+
+        const userInfo = {
+            userId: userId,
+            userName: userName,
+            userAvatar: userAvatar,
+            roomID: roomId,
+            roomName: roomName,
+            sessionId: sessionId
+        }
+
+        userBase.setGlobalData(userInfo)
+
+        roomService.queryRoomInfo(sessionId, roomId).then(roomInfo => {
+            this.formatRoomInfo(roomInfo)
+            userBase.setGlobalData(roomInfo)
+            const roomStatus = roomInfo.roomStatus
+            this.setData({
+                roomInfo: roomInfo
+            })
+
+            if (roomStatus === 0) {
+                // 未开播
+                this.setData({
+                    lessonOpen: false
+                })
+            } else if (roomStatus === 1 || roomStatus === 2) {
+                //  直播中
+                this.refresh(userId, userName, userAvatar, roomId, roomName)
+                roomService.queryLinkmicState(sessionId, roomId).then(res => {
+                    if (res === 'on') {
+                        this.setData({
+                            canLink: true
+                        })
+                    }
+                })
+            } else {
+                //  直播结束
+                this.setData({
+                    lessonOpen: false
+                })
+            }
+        })
+
+        roomService.queryConfig(sessionId, roomId).then(res => {
+            let list = []
+            let groupId = ''
+            if (res && res.collectTags && res.collectTags.tagList) {
+                groupId = res.collectTags.groupId
+                const tagListTemp = res.collectTags.tagList
+                tagListTemp.forEach(item => {
+                    item.selected = false
+                })
+                list = tagListTemp
+            }
+            roomInfoData.setRoomInfo({
+                tagList: list,
+                groupId: groupId
+            })
+        })
+    },
+
+    refresh(userId, userName, userAvatar, roomID, roomName) {
         wx.showLoading({
             title: '登录房间中',
         })
-
-        const userId = options.userId
-        const userName = options.userName
-        const userAvatar = options.userAvatar
 
         const loginInfo = {
             sdkAppID: userBase.getGlobalData().roomAppId,
@@ -65,8 +247,8 @@ Page({
                 //登录成功
                 wx.hideLoading()
                 this.setData({
-                    roomID: options.roomID,
-                    roomName: options.roomName,
+                    roomID: roomID,
+                    roomName: roomName,
                     userName: userName,
                     role: 'audience',
                     showLiveRoom: true
@@ -81,110 +263,16 @@ Page({
                     title: '登录失败',
                     content: ret.errMsg,
                     showCancel: false,
-                    complete: () => {}
+                    complete: () => {
+                    }
                 })
             }
         })
     },
 
-    onLoad: function (options) {
-        loadOptions = options
-        const userId = options.userId
-        const userName = options.userName
-        const userAvatar = options.userAvatar
-        const roomID = options.roomID
-        const roomName = options.roomName
-        const sessionId = options.sessionId
-        const role = options.type === 'create' ? 'anchor' : 'audience'
-        if (role !== 'audience') {
-            this.setData({
-                roomID: roomID,
-                roomName: roomName,
-                userName: userName,
-                role: role,
-                showLiveRoom: true
-            }, function () {
-                this.start();
-            })
-        } else {
-            if (!userId || !userName || !userAvatar || !roomID || !roomName || !sessionId) {
-                getWithWhere('inreview', {position: 'inreview'}).then(inReviewRes => {
-                    if (inReviewRes.length) {
-                        const inReviewInfo = inReviewRes[0]
-                        if (inReviewInfo.inreview) {
-                            //  审核中
-                            this.setData({
-                                noLogin: true
-                            })
-                        } else {
-                            //  未审核
-                            this.toLogin()
-                        }
-                    } else {
-                        //  未审核
-                        this.toLogin()
-                    }
-                }).catch(() => {
-                    //  未审核
-                    this.toLogin()
-                })
-            } else {
-                const userInfo = {
-                    userId: userId,
-                    userName: userName,
-                    userAvatar: userAvatar,
-                    roomID: roomID,
-                    roomName: roomName,
-                    sessionId: sessionId
-                }
-
-                userBase.setGlobalData(userInfo)
-
-                roomService.queryRoomInfo(sessionId, roomID).then(roomInfo => {
-                    this.formatRoomInfo(roomInfo)
-                    userBase.setGlobalData(roomInfo)
-                    const roomStatus = roomInfo.roomStatus
-                    this.setData({
-                        roomInfo: roomInfo
-                    })
-
-                    if (roomStatus === 0) {
-                        // 未开播
-                        this.setData({
-                            noLogin: true
-                        })
-
-                        // this.setData({
-                        //     noLogin: false
-                        // })
-                        // this.refresh(options)
-                    } else if (roomStatus === 1 || roomStatus === 2) {
-                        //  直播中
-                        this.setData({
-                            noLogin: false
-                        })
-                        this.refresh(options)
-                        roomService.queryLinkmicState(sessionId, roomID).then(res => {
-                            if (res === 'on') {
-                                this.setData({
-                                    canLink: true
-                                })
-                            }
-                        })
-                    } else {
-                        //  直播结束
-                        this.setData({
-                            noLogin: true
-                        })
-                    }
-                })
-            }
-        }
-    },
-
     toLogin() {
         this.setData({
-            noLogin: true,
+            lessonOpen: false,
             roomInfo: {
                 roomStatus: 0,
                 anchorAvatar: 'cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/define.png'
@@ -198,7 +286,7 @@ Page({
         if (data.roomStatus === 0) {
             data.desc = `${formatTime(start)} - ${formatTimeHM(end)}`
         } else if (data.roomStatus === 3) {
-            data.desc = '我们将在6小时内提供回看视频，敬请期待'
+            data.desc = '稍晚将提供回看视频，敬请期待'
         }
     },
 
@@ -216,9 +304,9 @@ Page({
             case 'roomClosed': {
                 const roomInfo = this.data.roomInfo
                 roomInfo.roomStatus = 3
-                roomInfo.desc = '我们将在6小时内提供回看视频，敬请期待'
+                roomInfo.desc = '稍晚将提供回看视频，敬请期待'
                 self.setData({
-                    noLogin: true,
+                    lessonOpen: false,
                     roomInfo: roomInfo
                 })
                 break;
@@ -234,9 +322,8 @@ Page({
                 } else {
                     if (args.code === -9003) {
                         self.setData({
-                            noLogin: true
+                            lessonOpen: false
                         })
-                        console.log(this.data.noLogin)
                     }
                     if (args.code != -9004) {
                         // setTimeout(() => {
@@ -368,24 +455,6 @@ Page({
     },
 
     /**
-     * 生命周期函数--监听页面显示
-     */
-    onShow: function () {
-        if (this.data.shouldExit) {
-            wx.showModal({
-                title: '提示',
-                content: "收到退房通知",
-                showCancel: false,
-                complete: function () {
-                    wx.navigateBack({delta: 1});
-                }
-            });
-        }
-        var self = this;
-        self.component && self.component.resume();
-    },
-
-    /**
      * 生命周期函数--监听页面隐藏
      */
     onHide: function () {
@@ -396,9 +465,7 @@ Page({
     /**
      * 生命周期函数--监听页面卸载
      */
-    onUnload: function () {
-        var self = this;
-    },
+    onUnload: function () {},
 
     /**
      * 页面相关事件处理函数--监听用户下拉动作
@@ -418,9 +485,15 @@ Page({
      * 用户点击右上角分享
      */
     onShareAppMessage: function () {
+        let path = 'pages/mlvb-live-room-demo/live-room-page/room'
+        const roomId = globalOptions.roomID
+        if (roomId) {
+            const roomName = globalOptions.roomName
+            path = `${path}?roomID=${roomId}&roomName=${roomName}`
+        }
         return {
             title: '红松看看吧',
-            path: 'pages/mlvb-live-room-demo/live-room-page/room',
+            path: path,
             imageUrl: 'cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/define.png'
         }
     },
@@ -459,43 +532,57 @@ Page({
     bindInputMsg: function (e) {
         this.data.inputMsg = e.detail.value;
     },
+
     onBack: function () {
         wx.navigateBack({
             delta: 1
         });
     },
 
-    onClickGetUserInfo() {
-        getSetting('scope.userInfo').then(scopeRes => {
-            if (scopeRes) {
-                //  已授权
-                this.setData({
-                    scopeUserInfo: true
-                })
-                this.refresh(loadOptions)
-            } else {
-                //  未授权
-                this.setData({
-                    scopeUserInfo: false
-                })
-            }
-        }).catch(err => {
-            //  接口出错当未授权处理
-            this.setData({
-                scopeUserInfo: false
-            })
-        })
-    },
-
     onJumpServer() {
         const roomInfo = this.data.roomInfo
         if (roomInfo.anchorAvatar) {
-            backJump().then(() => {}).catch(() => {
-                jumpNewMini('wxa7740225caabc3ea').then(() => {}).catch(() => {})
+            backJump().then(() => {
+            }).catch(() => {
+                jumpNewMini('wxa7740225caabc3ea').then(() => {
+                }).catch(() => {
+                })
             })
         } else {
             const url = '../../caster-login/caster-login'
-            pageJump(url).then(() => {}).catch(() => {})
+            pageJump(url).then(() => {
+            }).catch(() => {
+            })
         }
-    }
+    },
+
+    onGetUserInfo() {
+        getSetting('scope.userInfo').then(res => {
+            if (res) {
+                //  已授权
+                initSessionId()
+                this.initInfo(globalOptions)
+                this.setData({
+                    show: false
+                })
+            } else {
+                wx.showModal({
+                    content: '获取授权失败,请同意授权',
+                    showCancel: false
+                })
+                //  未授权
+                this.setData({
+                    show: true
+                })
+            }
+        })
+    },
+
+    onClickHide() {
+        this.setData({
+            show: false
+        })
+    },
+
+    noop() {}
 })

@@ -1,6 +1,7 @@
 {
     "navigationBarTitleText": "直播体验室",
     "usingComponents": {
-        "mlvb-live-room": "/pages/components/mlvb-live-room/mlvbliveroomview"
+        "mlvb-live-room": "/pages/components/mlvb-live-room/mlvbliveroomview",
+        "van-overlay": "@vant/weapp/overlay/index"
     }
 }

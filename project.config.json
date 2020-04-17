@@ -75,7 +75,7 @@
 					"id": 3,
 					"name": "跳入直播间带参数",
 					"pathName": "pages/mlvb-live-room-demo/live-room-page/room",
-					"query": "userId=wxun_ooWx4uPbe3vmNdKVBXcNR6EzlYG0&userName=胖🐟🐴&userAvatar=https://wx.qlogo.cn/mmopen/vi_32/DYAIOgq83eokG03icFicBSap34xvOpiaDM4lenInBILztHCyg08nHN4Y8Vtu3zIaPXGcN0ickGicr07dXS1nZ8XiajAw/132&roomID=room_lec1_c116&roomName=给手机瘦瘦身&sessionId=409624684053745664",
+					"query": "roomID=room_lec1_c116&roomName=给手机瘦瘦身",
 					"scene": null
 				},
 				{

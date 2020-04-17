@@ -15,6 +15,8 @@
                         linkError="{{linkError}}"
                         linkOk="{{linkOk}}"
                         canLink="{{canLink}}"
+                        casterCloseLinkNumber="{{casterCloseLinkNumber}}"
+                        roomData="{{roomData}}"
                         bind:switchCameraEvent="onSwitchCameraEvent"
                         bind:casterStartEvent="onCasterStartEvent"
                         bind:mainPushEvent="onMainPushEvent"

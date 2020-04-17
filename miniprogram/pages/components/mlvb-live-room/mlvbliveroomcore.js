@@ -77,6 +77,9 @@ var RoomServiceUrl = "https://liveroom.qcloud.com/weapp/live_room/",
         },
         onCasterLinkOp: function () {
             //  连麦权限
+        },
+        onCasterCloseLink: function () {
+            //  连麦挂断
         }
     };
 // 随机昵称
@@ -439,6 +442,8 @@ function receiveMsg(msg) {
             event.onCasterLinkOp && event.onCasterLinkOp({
                 status: contentObj.data.status
             });
+        } else if (contentObj.cmd === 'CasterCloseLink') {
+            event.onCasterCloseLink && event.onCasterCloseLink();
         } else if (contentObj.cmd === 'AudienceCallLike') {
             msg.userName = contentObj.data.userName;
             msg.userAvatar = contentObj.data.userAvatar;
@@ -949,6 +954,8 @@ function setListener(options) {
     event.onAudienceToLink = options.onAudienceToLink || function () {
     };
     event.onCasterLinkOp = options.onCasterLinkOp || function () {
+    };
+    event.onCasterCloseLink = options.onCasterCloseLink || function () {
     };
 }
 

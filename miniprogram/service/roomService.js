@@ -183,4 +183,44 @@ export class RoomService {
             })
         })
     }
+
+    /**
+     * 查询问题 tag
+     */
+    queryConfig(sessionId, roomId) {
+        const roomIdTemp = roomId.replace('room_', '')
+        const url = '/room/api/config'
+        const params = {
+            sessionId: sessionId,
+            roomId: roomIdTemp,
+            appSign: 'hongsongkebiao'
+        }
+        return this.http.newGet(url, params)
+    }
+
+    /**
+     * 保存用户标签
+     */
+    savetags(sessionId, groupId, tagIds) {
+        const url = '/user/api/savetags'
+        const params = {
+            sessionId: sessionId,
+            groupId: groupId,
+            tagIds: tagIds.toString()
+        }
+        return this.http.newPost(url, params)
+    }
+
+    /**
+     * 提交连麦反馈
+     */
+    savecsi(sessionId, csiData, csiType = 'linkmic') {
+        const url = '/user/api/savecsi'
+        const params = {
+            sessionId: sessionId,
+            csiType: csiType,
+            csiData: JSON.stringify(csiData)
+        }
+        return this.http.newPost(url, params)
+    }
 }

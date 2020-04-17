@@ -42,7 +42,8 @@ Component({
         beauty: {type: Number, value: 5},
         muted: {type: Boolean, value: false},
         pureaudio: {type: Boolean, value: false},
-        canLink: {type: Boolean, value: false}
+        canLink: {type: Boolean, value: false},
+        roomData: {type: Object, value: {}}
     },
 
     data: {
@@ -96,7 +97,8 @@ Component({
         requestLinkError: false,
         preLinkInfo: {},
         linkError: false,
-        linkOk: false
+        linkOk: false,
+        casterCloseLinkNumber: 0
     },
 
     methods: {
@@ -273,7 +275,8 @@ Component({
                 onRoomInfoUpdate: self.onRoomInfoUpdate,
                 onCasterPreLink: self.onCasterPreLink,
                 onAudienceToLink: self.onAudienceToLink,
-                onCasterLinkOp: self.onCasterLinkOp
+                onCasterLinkOp: self.onCasterLinkOp,
+                onCasterCloseLink: self.onCasterCloseLink
             });
         },
 
@@ -461,7 +464,8 @@ Component({
                 onRoomInfoUpdate: self.onRoomInfoUpdate,
                 onCasterPreLink: self.onCasterPreLink,
                 onAudienceToLink: self.onAudienceToLink,
-                onCasterLinkOp: self.onCasterLinkOp
+                onCasterLinkOp: self.onCasterLinkOp,
+                onCasterCloseLink: self.onCasterCloseLink
             });
             liveroom.enterRoom({
                 data: {
@@ -1142,6 +1146,13 @@ Component({
                     canLink: false
                 })
             }
+        },
+        onCasterCloseLink() {
+            const self = _this;
+            const casterCloseLinkNumber = self.data.casterCloseLinkNumber + 1
+            self.setData({
+                casterCloseLinkNumber: casterCloseLinkNumber
+            })
         },
         onCasterPreLink(ret) {
             const self = _this;

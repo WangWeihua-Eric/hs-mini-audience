@@ -3,6 +3,7 @@
   "usingComponents": {
     "van-field": "@vant/weapp/field/index",
     "app-call-rose": "../call-rose/app-call-rose",
-    "van-action-sheet": "@vant/weapp/action-sheet/index"
+    "van-action-sheet": "@vant/weapp/action-sheet/index",
+    "van-popup": "@vant/weapp/popup/index"
   }
 }

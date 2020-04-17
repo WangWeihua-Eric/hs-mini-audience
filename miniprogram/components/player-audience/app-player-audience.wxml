@@ -1,4 +1,7 @@
 <view class="audience-content f-c-js-ac" bindtap="onCloseSheet">
+    <view class="header-title f-js-ac">
+        <view class="room-name f-js-ac">{{roomData.roomName}}</view>
+    </view>
     <view wx:if="{{roomInfoData && roomInfoData.anchorAvatar}}" class="audience-header f-jb-ac">
         <view class="audience-header-left f-jb-ac">
             <view class="f-js-ac">
@@ -70,11 +73,12 @@
     <van-action-sheet bgColor="{{bgColor}}" show="{{ show }}" overlay="{{false}}" bind:close="onCloseSheet">
         <view wx:if="{{!inCallLink}}" class="sheet-content f-c-je-ac">
             <view class="sheet-title f-c-jc-as">
-                <view>和老师连线</view>
-                <view class="sub-sheet-text">您前边还有 {{inWite ? index : linkWiteList.length}} 人</view>
+                <view>{{needSelectTag ? '告诉我们您想调理的症状' : '和老师连线'}}</view>
+                <view wx:if="{{!needSelectTag}}" class="sub-sheet-text">您前边还有 {{inWite ? index : linkWiteList.length}} 人</view>
+                <view wx:if="{{needSelectTag}}" class="sub-sheet-text">更容易优先被老师选中哦！</view>
             </view>
-            <view wx:if="{{!linkWiteList.length}}" class="sheet-sub-tip">快和老师当面聊聊吧...</view>
-            <view wx:else class="link-content">
+            <view wx:if="{{!linkWiteList.length && !needSelectTag}}" class="sheet-sub-tip">快和老师当面聊聊吧...</view>
+            <view wx:elif="{{!needSelectTag}}" class="link-content">
                 <view wx:for="{{linkWiteList}}" wx:for-item="item" wx:for-index="index" wx:key="index" class="user-link-item f-jb-ac">
                     <view class="f-js-ac">
                         <view class="item-order">{{item.order}}</view>
@@ -84,7 +88,11 @@
                     <view class="item-link-status">等待中</view>
                 </view>
             </view>
-            <view wx:if="{{!inWite}}" class="hidden-close-sheet f-jc-ac" catch:tap="onClickLink">免费连线</view>
+            <view wx:else class="link-content f-js-as-w">
+                <view wx:for="{{selectTagList}}" wx:for-item="item" wx:for-index="index" wx:key="index" class="link-tag" style="background: {{item.selected ? 'rgba(255,255,255,1)' : ''}}; color: {{item.selected ? '#000000' : '#FFFFFF'}};" catch:tap="onSelectTag" data-value="{{item}}">{{item.tagName}}</view>
+            </view>
+            <view wx:if="{{needSelectTag}}" class="cancel-sheet f-jc-ac" catch:tap="onClickQuestion" style="background-color: {{selectedIds.length ? '#EC4B57' : '#959595'}}">选好了，申请连麦</view>
+            <view wx:elif="{{!inWite}}" class="hidden-close-sheet f-jc-ac" catch:tap="onClickLink">免费连线</view>
             <view wx:if="{{inWite}}" class="cancel-sheet f-jc-ac" catch:tap="onCancelLink">取消连线</view>
         </view>
         <view wx:if="{{inCallLink}}" class="sheet-content f-c-je-ac">
@@ -93,4 +101,14 @@
             <view class="hidden-close-sheet f-jc-ac" catch:tap="onCloseSheet">我知道了</view>
         </view>
     </van-action-sheet>
+
+    <van-popup show="{{ showPop }}" bind:close="onClosePop">
+        <view class="pop-content f-c-jb-ac">
+            <view class="pop-text">本次调理方案对您有帮助吗？</view>
+            <view class="f-jb-ac">
+                <view class="no-help f-jc-ac" bindtap="onNoHelp">没帮助</view>
+                <view class="can-help f-jc-ac" bindtap="onCanHelp">有帮助</view>
+            </view>
+        </view>
+    </van-popup>
 </view>

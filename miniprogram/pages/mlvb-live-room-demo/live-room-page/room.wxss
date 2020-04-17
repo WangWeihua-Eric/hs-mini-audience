@@ -220,6 +220,51 @@ Page {
     z-index: 1;
 }
 
+.wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.welcome-block {
+    position: absolute;
+    top: 200rpx;
+    width: 651rpx;
+    height: 840rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.welcome-img {
+    width: 651rpx;
+    height: 840rpx;
+}
+
+.welcome-join-info {
+    position: absolute;
+    bottom: 60rpx;
+}
+
+.welcome-title {
+    font-size:32rpx;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:rgba(243,236,169,1);
+    padding-right: 10rpx;
+}
+
+.join-btn {
+    font-size:42rpx;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:white;
+    margin-top: 8rpx;
+    padding-right: 35rpx;
+}
+
 .container-box {
     position: relative;
     background-image: url(https://mc.qcloudimg.com/static/img/7da57e0050d308e2e1b1e31afbc42929/bg.png);

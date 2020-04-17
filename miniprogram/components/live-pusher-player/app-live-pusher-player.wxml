@@ -41,6 +41,8 @@
                                      linkPusherInfo="{{linkPusherInfo}}"
                                      preLinkInfo="{{preLinkInfo}}"
                                      canLink="{{canLink}}"
+                                     casterCloseLinkNumber="{{casterCloseLinkNumber}}"
+                                     roomData="{{roomData}}"
                                      bind:sendTextMsgEvent="onSendTextMsg"
                                      bind:onCallDown="quitLink"
                                      bind:lintTeacher="onLinkTeacherEvent"></app-player-audience>

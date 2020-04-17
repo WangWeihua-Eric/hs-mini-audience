@@ -1,4 +1,4 @@
-import {getStorage, wxLogin} from "../wx-utils/wx-base-utils";
+import {getStorage, getUserInfo, wxLogin} from "../wx-utils/wx-base-utils";
 import {HttpUtil} from "../http-utils/http-util";
 import {UserBase} from "./user-base";
 
@@ -12,11 +12,32 @@ export function getSessionId() {
     return wxLogin().then(res => {
         if (res.code) {
             const url = '/auth/api/wechatlogin'
-            const param = {
-                appSign: 'livehouse',
+            let param = {
+                appSign: 'hongsongkankanba',
                 code: res.code
             }
             return http.post(url, param, 'login')
+        }
+    })
+}
+
+/**
+ * 新登录方法
+ */
+export function newGetSessionId(userInfo) {
+    const http = new HttpUtil()
+    return wxLogin().then(res => {
+        if (res.code) {
+            const url = '/auth/api/wechat/micrologin'
+            let param = {
+                appSign: 'hongsongkankanba',
+                code: res.code,
+                rawData: userInfo.rawData,
+                signature: userInfo.signature,
+                encryptedData: userInfo.encryptedData,
+                iv: userInfo.iv
+            }
+            return http.newPost(url, param)
         }
     })
 }
@@ -45,20 +66,19 @@ export function initSessionId() {
 }
 
 function setSessionId() {
-    getSessionId().then(res => {
-        if (res && res.state && res.state.code === '0' && res.data) {
-            const sessionId = res.data.sessionId
-            if (sessionId) {
-                userBase.setGlobalData(res.data)
-                wx.setStorage({
-                    key:"sessionId",
-                    data: {
-                        ...res.data,
-                        updateTime: new Date().getTime()
-                    }
-                })
-
-            }
+    getUserInfo().then(userInfo => {
+        return newGetSessionId(userInfo)
+    }).then((res) => {
+        const sessionId = res.sessionId
+        if (sessionId) {
+            userBase.setGlobalData(res)
+            wx.setStorage({
+                key:"sessionId",
+                data: {
+                    ...res,
+                    updateTime: new Date().getTime()
+                }
+            })
         }
     })
 }

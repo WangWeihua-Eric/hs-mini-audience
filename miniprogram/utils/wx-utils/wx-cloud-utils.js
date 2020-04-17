@@ -1,11 +1,17 @@
-import {getSessionId} from "../user-utils/user-base-utils";
+import {getSessionId, newGetSessionId} from "../user-utils/user-base-utils";
 import {UserBase} from "../user-utils/user-base";
+import {getUserInfo} from "./wx-base-utils";
 
-export function login() {
+export function login(cloudID) {
     return new Promise((resolve, reject) => {
         wx.cloud.callFunction({
             name: 'login',
-            data: {},
+            data: {
+                UnionID: wx.cloud.CloudID(cloudID),
+                obj: {
+                    shareInfo: wx.cloud.CloudID(cloudID), // 非顶层字段的 CloudID 不会被替换，会原样字符串展示
+                }
+            },
             success: res => {
                 resolve(res)
             },
@@ -20,7 +26,7 @@ export function http(url, param, method, header = {'content-type': 'application/
     if (!param.appSign) {
         param = {
             ...param,
-            appSign: 'livehouse'
+            appSign: 'hongsongkankanba'
         }
     }
     return new Promise((resolve, reject) => {
@@ -34,9 +40,11 @@ export function http(url, param, method, header = {'content-type': 'application/
             },
             success: res => {
                 if (res && res.result && res.result.state && res.result.state.code === '401') {
-                    getSessionId().then(sessionInfo => {
-                        if (sessionInfo && sessionInfo.result && sessionInfo.result.state && sessionInfo.result.state.code === '0' && sessionInfo.result.data) {
-                            const sessionId = sessionInfo.result.data.sessionId
+                    getUserInfo().then(userInfo => {
+                        return newGetSessionId(userInfo)
+                    }).then((sessionInfo) => {
+                        if (sessionInfo) {
+                            const sessionId = sessionInfo.sessionId
                             if (sessionId) {
                                 wx.cloud.callFunction({
                                     name: 'http',
@@ -59,13 +67,13 @@ export function http(url, param, method, header = {'content-type': 'application/
                                 wx.setStorage({
                                     key:"sessionId",
                                     data: {
-                                        ...sessionInfo.result.data,
+                                        ...sessionInfo,
                                         updateTime: new Date().getTime()
                                     }
                                 })
 
                             } else {
-                                reject(sessionInfo.result.state)
+                                reject('sessionInfo 响应空')
                             }
                         }
                     })

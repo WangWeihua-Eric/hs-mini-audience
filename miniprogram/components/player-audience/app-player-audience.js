@@ -1,15 +1,18 @@
 import {RoomService} from "../../service/roomService";
 import {UserBase} from "../../utils/user-utils/user-base";
 import {getSetting} from "../../utils/wx-utils/wx-base-utils";
+import {RoomInfoData} from "../../data/room-info-data";
 
 const webimhandler = require('../../pages/components/mlvb-live-room/webim_handler');
 const liveroom = require('../../pages/components/mlvb-live-room/mlvbliveroomcore.js');
 
 const roomService = new RoomService()
 const userBase = new UserBase()
+const roomInfoData = new RoomInfoData()
 
 let roseNumber = 0
 let roseTimeHandle = null
+let isShowTag = true
 
 Component({
     component: null,
@@ -25,7 +28,9 @@ Component({
         requestLinkOk: {type: Boolean, value: false},
         linkPusherInfo: {type: Object, value: {}},
         preLinkInfo: {type: Object, value: {}},
-        canLink: {type: Boolean, value: false}
+        canLink: {type: Boolean, value: false},
+        casterCloseLinkNumber: {type: Number, value: 0},
+        roomData: {type: Object, value: {}}
     },
 
     observers: {
@@ -43,12 +48,20 @@ Component({
                 userImgList: showUserImgList
             })
         },
+        "casterCloseLinkNumber": function (casterCloseLinkNumber) {
+            if (casterCloseLinkNumber) {
+                this.setData({
+                    showPop: true
+                })
+            }
+        },
         "linkPusherInfo": function (linkPusherInfo) {
             if (!linkPusherInfo.url) {
                 this.setData({
                     requestLinkOk: false
                 })
             } else {
+                isShowTag = true
                 this.setData({
                     requestLinkOk: true
                 })
@@ -126,7 +139,11 @@ Component({
         callTime: 0,
         linkWiteList: [],
         inWite: false,
-        index: 0
+        index: 0,
+        needSelectTag: false,
+        selectTagList: [],
+        selectedIds: [],
+        showPop: false
     },
 
     lifetimes: {
@@ -205,6 +222,19 @@ Component({
                 return
             }
 
+            const tagList = roomInfoData.getRoomInfo().tagList
+
+            let needSelectTag = false
+
+            if (isShowTag && tagList && tagList.length) {
+                needSelectTag = true
+            }
+
+            this.setData({
+                needSelectTag: needSelectTag,
+                selectTagList: tagList
+            })
+
             Promise.all([getSetting('scope.record'), getSetting('scope.camera')]).then(res => {
                 if (res && res[0] && res[1]) {
                     this.updateLinkWiteList()
@@ -245,6 +275,25 @@ Component({
                 }
             })
         },
+
+        onClickQuestion() {
+            if (this.data.selectedIds && this.data.selectedIds.length) {
+                roomService.savetags(userBase.getGlobalData().sessionId, roomInfoData.getRoomInfo().groupId, this.data.selectedIds).then(() => {
+                    isShowTag = false
+                    this.onClickLink()
+                    this.setData({
+                        needSelectTag: false,
+                        selectTagList: []
+                    })
+                }).catch(() => {
+                    wx.showModal({
+                        content: '提问失败，请重试',
+                        showCancel: false
+                    })
+                })
+            }
+        },
+
         onClickLink() {
             roomService.linkmicPush(userBase.getGlobalData().sessionId, userBase.getGlobalData().roomId).then(() => {
                 this.triggerEvent('lintTeacher')
@@ -261,6 +310,7 @@ Component({
         },
         onCancelLink() {
             roomService.linkmicPop(userBase.getGlobalData().sessionId, userBase.getGlobalData().roomId).then(() => {
+                isShowTag = true
                 this.updateLinkWiteList(true)
             }).catch(() => {})
         },
@@ -270,6 +320,68 @@ Component({
 
         onCallDown() {
             this.triggerEvent('onCallDown')
+        },
+
+        onSelectTag(event) {
+            const itemInfo = event.currentTarget.dataset.value
+
+            let selectedIds = this.data.selectedIds
+            const selectTagList = this.data.selectTagList
+            selectTagList.forEach(item => {
+                if (item.id === itemInfo.id) {
+                    item.selected = !item.selected
+                    if (item.selected) {
+                        if (selectedIds.length < 2) {
+                            selectedIds.push(item.id)
+                        } else {
+                            item.selected = !item.selected
+                            wx.showModal({
+                                content: '最多选 2 个症状',
+                                showCancel: false
+                            })
+                        }
+                    } else {
+                        selectedIds = selectedIds.filter(id => id !== item.id)
+                    }
+                }
+            })
+            this.setData({
+                selectTagList: selectTagList,
+                selectedIds: selectedIds
+            })
+        },
+
+        onClosePop() {
+            this.setData({
+                showPop: false
+            })
+        },
+
+        onNoHelp() {
+            const csiData = {
+                roomId: userBase.getGlobalData().roomId,
+                value: 0
+            }
+            this.submitSavecsi(csiData)
+        },
+
+        onCanHelp() {
+            const csiData = {
+                roomId: userBase.getGlobalData().roomId,
+                value: 1
+            }
+            this.submitSavecsi(csiData)
+        },
+
+        submitSavecsi(csiData) {
+            roomService.savecsi(userBase.getGlobalData().sessionId, csiData).then(() => {
+                this.onClosePop()
+            }).catch(() => {
+                wx.showModal({
+                    content: '提交失败，请重试',
+                    showCancel: false
+                })
+            })
         }
     }
 })

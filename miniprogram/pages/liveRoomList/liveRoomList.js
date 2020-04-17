@@ -120,7 +120,7 @@ Page({
         })
 
         roomService.loginRoom(roomId, userName, userSig, roomAppId).then(() => {
-            const url = `../mlvb-live-room-demo/live-room-page/room?type=create&roomName=${roomName}&userName=${userName}&pureAudio=false`
+            const url = `../mlvb-live-room-demo/live-room-page/room?type=create&roomName=${roomName}&userName=${userName}&pureAudio=false&roomID=${roomId}`
             pageJump(url).then(() => {
             }).catch(() => {
             })

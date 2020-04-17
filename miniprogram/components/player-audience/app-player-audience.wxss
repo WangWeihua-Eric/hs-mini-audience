@@ -4,7 +4,7 @@
     height: 100%;
     width: 100%;
     box-sizing: border-box;
-    padding: 160rpx 20rpx 47rpx 16rpx;
+    padding: 75rpx 20rpx 47rpx 16rpx;
 }
 
 .audience-header {
@@ -12,8 +12,8 @@
 }
 
 .audience-header-left {
-    width: 365rpx;
-    height: 80rpx;
+    box-sizing: border-box;
+    padding: 5rpx 20rpx 5rpx 5rpx;
     background: rgba(0, 0, 0, 0.25);
     border-radius: 45rpx;
 }
@@ -85,6 +85,24 @@
     height: 84rpx;
     border-radius: 50%;
     overflow: hidden;
+}
+
+.header-title {
+    width: 100%;
+    margin: 0 0 20rpx 20rpx;
+}
+
+.room-name {
+    box-sizing: border-box;
+    padding: 6rpx 14rpx;
+    height:49rpx;
+    background:linear-gradient(90deg,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0) 100%);
+    border-radius:20rpx;
+    font-size:36rpx;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+    text-shadow:0rpx 2rpx 4rpx rgba(0,0,0,0.5);
 }
 
 .audience-bottom {
@@ -240,6 +258,17 @@
     margin-top: 24rpx;
 }
 
+.link-tag {
+    box-sizing: border-box;
+    padding: 15rpx 31rpx;
+    border:1rpx solid rgba(255,255,255,1);
+    border-radius:38rpx;
+    font-size:36rpx;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    margin: 17rpx 35rpx 17rpx 0;
+}
+
 .user-link-item {
     width: 100%;
     box-sizing: border-box;
@@ -285,6 +314,41 @@
     font-weight:500;
     color:rgba(255,255,255,1);
     margin-top: 49rpx;
+}
+
+.pop-content {
+    box-sizing: border-box;
+    padding: 54rpx 55rpx;
+}
+
+.pop-text {
+    font-size:36rpx;
+    font-family:PingFangSC-Regular,PingFang SC;
+    color:rgba(51,51,51,1);
+    margin-bottom: 73rpx;
+}
+
+.no-help {
+    width:260rpx;
+    height:86rpx;
+    background:rgba(244,244,244,1);
+    border-radius:8rpx;
+    border:1rpx solid rgba(218,218,218,1);
+    font-size:36rpx;
+    font-family:PingFangSC-Regular,PingFang SC;
+    color:rgba(51,51,51,1);
+    margin-right: 50rpx;
+}
+
+.can-help {
+    width:260rpx;
+    height:86rpx;
+    background:rgba(51,51,51,1);
+    border-radius:8rpx;
+    border:1rpx solid rgba(218,218,218,1);
+    font-size:36rpx;
+    font-family:PingFangSC-Regular,PingFang SC;
+    color:rgba(255,255,255,1);
 }
 
 .cancel-sheet {

@@ -30,7 +30,9 @@ Component({
         preLinkInfo: {type: Object, value: {}},
         linkError: {type: Boolean, value: false},
         linkOk: {type: Boolean, value: false},
-        canLink: {type: Boolean, value: false}
+        canLink: {type: Boolean, value: false},
+        casterCloseLinkNumber: {type: Number, value: 0},
+        roomData: {type: Object, value: {}}
     },
 
     observers: {

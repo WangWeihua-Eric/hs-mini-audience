@@ -84,4 +84,32 @@ export class HttpUtil {
             return res.result
         })
     }
+
+    newGet(url, params) {
+        return new Promise((resolve, reject) => {
+            http(this.host + url, params, 'GET').then(res => {
+                if (res && res.result && res.result.state && res.result.state.code === '0') {
+                    resolve(res.result.data)
+                } else {
+                    reject(res)
+                }
+            }).catch(err => {
+                reject(err)
+            })
+        })
+    }
+
+    newPost(url, params) {
+        return new Promise((resolve, reject) => {
+            http(this.host + url, params, 'POST').then(res => {
+                if (res && res.result && res.result.state && res.result.state.code === '0') {
+                    resolve(res.result.data)
+                } else {
+                    reject(res)
+                }
+            }).catch(err => {
+                reject(err)
+            })
+        })
+    }
 }
