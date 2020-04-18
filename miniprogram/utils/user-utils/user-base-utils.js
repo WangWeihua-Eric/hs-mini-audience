@@ -69,16 +69,22 @@ function setSessionId() {
     getUserInfo().then(userInfo => {
         return newGetSessionId(userInfo)
     }).then((res) => {
-        const sessionId = res.sessionId
-        if (sessionId) {
-            userBase.setGlobalData(res)
-            wx.setStorage({
-                key:"sessionId",
-                data: {
-                    ...res,
-                    updateTime: new Date().getTime()
-                }
-            })
+        if (res) {
+            const sessionId = res.sessionId
+            if (sessionId) {
+                userBase.setGlobalData(res)
+                wx.setStorage({
+                    key:"sessionId",
+                    data: {
+                        ...res,
+                        updateTime: new Date().getTime()
+                    }
+                })
+            }
+        } else {
+            setTimeout(() => {
+                setSessionId()
+            }, 200)
         }
     })
 }

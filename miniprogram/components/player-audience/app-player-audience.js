@@ -13,6 +13,7 @@ const roomInfoData = new RoomInfoData()
 let roseNumber = 0
 let roseTimeHandle = null
 let isShowTag = true
+let showPopLastTime = 0
 
 Component({
     component: null,
@@ -50,9 +51,13 @@ Component({
         },
         "casterCloseLinkNumber": function (casterCloseLinkNumber) {
             if (casterCloseLinkNumber) {
-                this.setData({
-                    showPop: true
-                })
+                const nowTime = new Date().getTime()
+                if ((nowTime - showPopLastTime) > 60000) {
+                    showPopLastTime = nowTime
+                    this.setData({
+                        showPop: true
+                    })
+                }
             }
         },
         "linkPusherInfo": function (linkPusherInfo) {

@@ -75,7 +75,7 @@
 					"id": 3,
 					"name": "跳入直播间带参数",
 					"pathName": "pages/mlvb-live-room-demo/live-room-page/room",
-					"query": "roomID=room_lec1_c116&roomName=给手机瘦瘦身",
+					"query": "roomID=room_lec34_c264&roomName=给手机瘦瘦身",
 					"scene": null
 				},
 				{
