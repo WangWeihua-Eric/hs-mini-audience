@@ -17,6 +17,8 @@
                         canLink="{{canLink}}"
                         casterCloseLinkNumber="{{casterCloseLinkNumber}}"
                         roomData="{{roomData}}"
+                        enterRoomList="{{enterRoomList}}"
+                        linkMicPrice="{{linkMicPrice}}"
                         bind:switchCameraEvent="onSwitchCameraEvent"
                         bind:casterStartEvent="onCasterStartEvent"
                         bind:mainPushEvent="onMainPushEvent"

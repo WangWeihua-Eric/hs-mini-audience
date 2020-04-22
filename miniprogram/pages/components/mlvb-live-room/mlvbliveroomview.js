@@ -1,5 +1,6 @@
 import {UserBase} from "../../../utils/user-utils/user-base";
 import {RoomService} from "../../../service/roomService";
+import {RoomInfoData} from "../../../data/room-info-data";
 
 var liveroom = require('./mlvbliveroomcore.js');
 const app = getApp()
@@ -7,6 +8,8 @@ const app = getApp()
 const roomService = new RoomService()
 
 const userBase = new UserBase()
+
+const roomInfoData = new RoomInfoData()
 
 // 没使用到
 var errorCode = [
@@ -43,7 +46,9 @@ Component({
         muted: {type: Boolean, value: false},
         pureaudio: {type: Boolean, value: false},
         canLink: {type: Boolean, value: false},
-        roomData: {type: Object, value: {}}
+        roomData: {type: Object, value: {}},
+        enterRoomList: {type: Array, value: []},
+        linkMicPrice: {type: Object, value: {}}
     },
 
     data: {
@@ -176,7 +181,7 @@ Component({
                 mask: true,
             })
         },
-        sendTextMsg(text) {
+        sendTextMsg(text, toName = '') {
             var self = this;
             if (text.startsWith('>')) {
                 switch (text) {
@@ -187,7 +192,10 @@ Component({
                 }
             }
             liveroom.sendRoomTextMsg({
-                data: {msg: text},
+                data: {
+                    msg: text,
+                    toName: toName
+                },
                 success: () => {
                 },
                 fail: (e) => {
@@ -228,7 +236,8 @@ Component({
 
         onSendTextMsgEvent(event) {
             const text = event.detail.text
-            this.sendTextMsg(text)
+            const toName = event.detail.toName
+            this.sendTextMsg(text, toName)
         },
 
         onSwitchCameraEvent() {
@@ -1145,6 +1154,8 @@ Component({
                 self.setData({
                     canLink: false
                 })
+
+                self.updateToUsers()
             }
         },
         onCasterCloseLink() {
@@ -1153,6 +1164,24 @@ Component({
             self.setData({
                 casterCloseLinkNumber: casterCloseLinkNumber
             })
+
+            self.updateToUsers()
+        },
+        updateToUsers() {
+            const sessionId = userBase.getGlobalData().sessionId
+            const roomId = userBase.getGlobalData().roomId
+            roomService.querylinkmicOnmicList(sessionId, roomId).then(res => {
+                const toUsers = []
+                res.forEach(item => {
+                    toUsers.push(item.nickname)
+                })
+                if (toUsers && toUsers.length) {
+                    toUsers.push('老师')
+                }
+                roomInfoData.setRoomInfo({
+                    toUsers: toUsers
+                })
+            }).catch(() => {})
         },
         onCasterPreLink(ret) {
             const self = _this;

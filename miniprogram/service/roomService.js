@@ -193,7 +193,8 @@ export class RoomService {
         const params = {
             sessionId: sessionId,
             roomId: roomIdTemp,
-            appSign: 'hongsongkebiao'
+            appSign: 'hongsongkebiao',
+            version: 1
         }
         return this.http.newGet(url, params)
     }
@@ -222,5 +223,33 @@ export class RoomService {
             csiData: JSON.stringify(csiData)
         }
         return this.http.newPost(url, params)
+    }
+
+    /**
+     * 查询当前连麦的人
+     */
+    querylinkmicOnmicList(sessionId, roomId) {
+        const roomIdTemp = roomId.replace('room_', '')
+        const url = '/room/api/linkmic/onmiclist'
+        const params = {
+            sessionId: sessionId,
+            roomId: roomIdTemp,
+        }
+        return this.http.newGet(url, params)
+    }
+
+    /**
+     * 获取房间支付鉴权
+     */
+    getRoomPayInfo(sessionId, code, productId, data) {
+        const url = '/order/api/wechat/micro/order'
+        const params = {
+            appSign: 'hongsongkankanba',
+            sessionId: sessionId,
+            code: code,
+            productId: productId,
+            data: data
+        }
+        return this.http.newGet(url, params)
     }
 }

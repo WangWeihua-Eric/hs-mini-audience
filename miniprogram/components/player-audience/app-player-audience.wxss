@@ -144,6 +144,10 @@
     color: #FFFFFF;
 }
 
+.text-toname {
+    color: #FF49C6;
+}
+
 .input-temp {
     width:380rpx;
     height:84rpx;
@@ -176,6 +180,26 @@
     overflow: hidden;
 }
 
+.link-btn {
+    position: relative;
+}
+
+.to-pay-link {
+    box-sizing: border-box;
+    padding: 4rpx 35rpx;
+    background:rgba(255,255,255,1);
+    border-radius:42rpx;
+    font-size:30rpx;
+    font-family:PingFangSC-Medium,PingFang SC;
+    font-weight:500;
+    color:rgba(0,0,0,1);
+    margin-left: 30rpx;
+}
+
+.pay-info-text {
+    margin-top: -7rpx;
+}
+
 .pre-link {
     width:190rpx;
     height:84rpx;
@@ -188,8 +212,52 @@
     margin-left: 30rpx;
 }
 
+.price-pup-img {
+    width: 174rpx;
+    height: 99rpx;
+}
+
+.price-text {
+    width: 174rpx;
+    height: 90rpx;
+    position: absolute;
+    top: 0;
+}
+
+.old-price {
+    font-size:28rpx;
+    font-family:PingFangSC-Medium,PingFang SC;
+    font-weight:500;
+    color:rgba(193,193,193,1);
+    text-decoration: line-through;
+}
+
+.new-price {
+    font-size:30rpx;
+    font-family:PingFangSC-Medium,PingFang SC;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+}
+
+.price-pup-info {
+    position: absolute;
+    width: 174rpx;
+    height: 99rpx;
+    top: -107rpx;
+    left: 37rpx;
+}
+
 .call-down {
     width: 100%;
+}
+
+.time-des {
+    background:rgba(0,0,0, 0.29);
+    border-radius:8rpx;
+    color: #FFFFFF;
+    box-sizing: border-box;
+    padding: 13rpx;
+    margin-bottom: 50rpx;
 }
 
 .call-down-btn {
@@ -209,12 +277,25 @@
 
 .real-input {
     width: 100%;
-    height: 132rpx;
     background-color: white;
     position: absolute;
     left: 0;
     box-sizing: border-box;
     padding: 22rpx 16rpx;
+}
+
+.to-who-speak {
+    margin-bottom: 19rpx;
+}
+
+.speak-item {
+    border-radius:31rpx;
+    padding: 9rpx 20rpx;
+    box-sizing: border-box;
+    font-size:30rpx;
+    font-family:PingFangSC-Medium,PingFang SC;
+    font-weight:500;
+    margin-right: 20rpx;
 }
 
 .real-input-border {
@@ -319,6 +400,121 @@
 .pop-content {
     box-sizing: border-box;
     padding: 54rpx 55rpx;
+}
+
+.tag-content {
+    width:700rpx;
+    height:820rpx;
+    position: relative;
+}
+
+.once-tag-content {
+    box-sizing: border-box;
+    padding: 102rpx 24rpx 75rpx 44rpx;
+    width:700rpx;
+    height:820rpx;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
+.once-tag-img {
+    width: 332rpx;
+    height: 455rpx;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1;
+}
+
+.tag-title {
+    font-size:38rpx;
+    font-family:PingFangSC-Semibold,PingFang SC;
+    font-weight:600;
+    color:rgba(51,51,51,1);
+}
+
+.tag-list {
+    margin: 157rpx 0 53rpx 0;
+}
+
+.select-once-tag-img {
+    width: 53rpx;
+    height: 52rpx;
+    position: absolute;
+    top: -9rpx;
+    right: -11rpx;
+}
+
+.tag-select-btn {
+    width:366rpx;
+    height:97rpx;
+    border-radius:49rpx;
+    font-size:38rpx;
+    font-family:PingFangSC-Medium,PingFang SC;
+    font-weight:500;
+}
+
+.pre-pay-content {
+    position: relative;
+    width: 592rpx;
+    height: 756rpx;
+}
+
+.pre-pay-img {
+    width: 592rpx;
+    height: 596rpx;
+}
+
+.pre-pay-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    box-sizing: border-box;
+    padding: 250rpx 60rpx 34rpx 60rpx;
+    width: 592rpx;
+    height: 756rpx;
+}
+
+.pre-pay-title {
+    font-size:72rpx;
+    font-family:SourceHanSansCN-Bold,SourceHanSansCN;
+    font-weight:bold;
+    color:rgba(255,255,255,1);
+    text-shadow:0rpx 2rpx 4rpx rgba(0,0,0,0.29);
+    margin-bottom: 90rpx;
+}
+
+.pre-pay-text {
+    font-size:32rpx;
+    font-family:SourceHanSansCN-Regular,SourceHanSansCN;
+    color:rgba(51,51,51,1);
+    margin-bottom: 39rpx;
+}
+
+.to-pay-btn {
+    width:472rpx;
+    height:84rpx;
+    background:rgba(168,83,71,1);
+    border-radius:42rpx;
+    font-size:32rpx;
+    font-family:SourceHanSansCN-Medium,SourceHanSansCN;
+    font-weight:500;
+    color:rgba(255,255,255,1);
+}
+
+.other-button-hover {
+    background-color: rgba(168,83,71, 0.8);
+}
+
+.once-tag-item {
+    width:138rpx;
+    height:90rpx;
+    box-shadow:0rpx 1rpx 18rpx 0rpx rgba(0,0,0,0.1);
+    border-radius:11rpx;
+    margin: 0 20rpx 30rpx 0;
+    position: relative;
 }
 
 .pop-text {

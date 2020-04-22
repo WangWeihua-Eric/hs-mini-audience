@@ -3,7 +3,7 @@ import {
     getStorage,
     getUserInfo,
     jumpNewMini,
-    pageJump
+    pageJump, wxLogin
 } from "../../../utils/wx-utils/wx-base-utils";
 import {formatTime, formatTimeHM} from "../../../utils/time-utils/time-utils";
 import {UserBase} from "../../../utils/user-utils/user-base";
@@ -48,7 +48,11 @@ Page({
         roomInfo: {},
         canLink: false,
         lessonOpen: true,
-        show: false
+        show: false,
+        enterRoomList: [],
+        linkMicPrice: {},
+        privilege: true,
+        inreview: false
     },
 
     initInfo(options) {
@@ -126,7 +130,8 @@ Page({
                     if (inReviewInfo.inreview) {
                         //  审核中
                         this.setData({
-                            lessonOpen: false
+                            lessonOpen: false,
+                            inreview: true
                         })
                     } else {
                         //  未审核
@@ -210,21 +215,54 @@ Page({
         })
 
         roomService.queryConfig(sessionId, roomId).then(res => {
+            if (res && res.roomPrice && res.roomPrice.privilege === 0) {
+                this.setData({
+                    privilege: false
+                })
+            }
             let list = []
+            let enterRoomList = []
             let groupId = ''
+            let linkMicPrice = {}
             if (res && res.collectTags && res.collectTags.tagList) {
                 groupId = res.collectTags.groupId
                 const tagListTemp = res.collectTags.tagList
                 tagListTemp.forEach(item => {
                     item.selected = false
                 })
-                list = tagListTemp
+                if (tagListTemp && tagListTemp.length) {
+                    list = tagListTemp.filter(item => item.bindEvent === 'linkmic')
+                    enterRoomList = tagListTemp.filter(item => item.bindEvent === 'enterroom')
+                }
+            }
+
+            if (res && res.linkMicPrice) {
+                linkMicPrice = res.linkMicPrice
             }
             roomInfoData.setRoomInfo({
                 tagList: list,
-                groupId: groupId
+                groupId: groupId,
+                enterRoomList: enterRoomList,
+                linkMicPrice: linkMicPrice
+            })
+            this.setData({
+                enterRoomList: enterRoomList,
+                linkMicPrice: linkMicPrice
             })
         })
+
+        roomService.querylinkmicOnmicList(sessionId, roomId).then(res => {
+            const toUsers = []
+            res.forEach(item => {
+                toUsers.push(item.nickname)
+            })
+            if (toUsers && toUsers.length) {
+                toUsers.push('老师')
+            }
+            roomInfoData.setRoomInfo({
+                toUsers: toUsers
+            })
+        }).catch(() => {})
     },
 
     refresh(userId, userName, userAvatar, roomID, roomName) {

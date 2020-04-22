@@ -231,3 +231,27 @@ export function saveImg(filePath) {
         })
     })
 }
+
+/**
+ * 唤起微信支付
+ */
+export function requestPayment(params) {
+    return new Promise((resolve, reject) => {
+        const payData = {
+            timeStamp: params.timeStamp,
+            nonceStr: params.nonceStr,
+            package: params.package,
+            signType: params.signType,
+            paySign: params.paySign,
+        }
+        wx.requestPayment({
+            ...payData,
+            success: (res) => {
+                resolve(res)
+            },
+            fail: (err) => {
+                reject(err)
+            }
+        })
+    })
+}

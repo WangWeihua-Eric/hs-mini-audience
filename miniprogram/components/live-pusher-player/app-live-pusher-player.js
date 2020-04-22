@@ -32,7 +32,9 @@ Component({
         linkOk: {type: Boolean, value: false},
         canLink: {type: Boolean, value: false},
         casterCloseLinkNumber: {type: Number, value: 0},
-        roomData: {type: Object, value: {}}
+        roomData: {type: Object, value: {}},
+        enterRoomList: {type: Array, value: []},
+        linkMicPrice: {type: Object, value: {}}
     },
 
     observers: {

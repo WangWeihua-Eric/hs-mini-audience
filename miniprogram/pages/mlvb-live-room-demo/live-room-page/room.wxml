@@ -1,5 +1,16 @@
 <view class='container-box'>
-    <view wx:if="{{!lessonOpen}}" class="content f-jc-ac">
+    <view wx:if="{{!privilege && !inreview}}" class="content f-jc-ac">
+        <image class="bg-img" src="{{roomInfo.roomCoverImg ? roomInfo.roomCoverImg : 'cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/define.png'}}"></image>
+        <view class="over-content f-c-jc-ac">
+            <image class="user-img" lazy-load="{{true}}" src="{{roomInfo.anchorAvatar ? roomInfo.anchorAvatar : 'cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/define.png'}}"></image>
+            <view class="user-name">{{roomInfo.anchorName ? roomInfo.anchorName : '红松看看吧'}}</view>
+            <view class="desc">此次直播仅限购买用户查看，详询小江班主任！</view>
+            <view class="sub-tip">{{roomInfo.roomName ? roomInfo.roomName : '您可以点击下方按钮进入大厅等待'}}</view>
+            <view class="enter-room f-jc-ac" bindtap="onJumpServer">返回</view>
+        </view>
+    </view>
+
+    <view wx:elif="{{!lessonOpen}}" class="content f-jc-ac">
         <image class="bg-img" src="{{roomInfo.roomCoverImg ? roomInfo.roomCoverImg : 'cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/define.png'}}"></image>
         <view class="over-content f-c-jc-ac">
             <image class="user-img" lazy-load="{{true}}" src="{{roomInfo.anchorAvatar ? roomInfo.anchorAvatar : 'cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/define.png'}}"></image>
@@ -11,11 +22,13 @@
         </view>
     </view>
 
-    <view wx:if="{{lessonOpen}}">
+    <view wx:else>
         <mlvb-live-room id="id_liveroom" wx:if="{{showLiveRoom}}" roomid="{{roomID}}" role="{{role}}"
                         roomname="{{roomName}}" pureaudio="{{pureAudio}}" debug="{{debug}}" muted="{{muted}}"
                         canLink="{{canLink}}"
                         roomData="{{roomInfo}}"
+                        enterRoomList="{{enterRoomList}}"
+                        linkMicPrice="{{linkMicPrice}}"
                         beauty="{{beauty}}" template="float" bindRoomEvent="onRoomEvent">
         </mlvb-live-room>
     </view>

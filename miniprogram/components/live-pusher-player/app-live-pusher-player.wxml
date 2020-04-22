@@ -43,6 +43,8 @@
                                      canLink="{{canLink}}"
                                      casterCloseLinkNumber="{{casterCloseLinkNumber}}"
                                      roomData="{{roomData}}"
+                                     enterRoomList="{{enterRoomList}}"
+                                     linkMicPrice="{{linkMicPrice}}"
                                      bind:sendTextMsgEvent="onSendTextMsg"
                                      bind:onCallDown="quitLink"
                                      bind:lintTeacher="onLinkTeacherEvent"></app-player-audience>

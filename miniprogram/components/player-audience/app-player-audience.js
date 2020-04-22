@@ -1,7 +1,8 @@
 import {RoomService} from "../../service/roomService";
 import {UserBase} from "../../utils/user-utils/user-base";
-import {getSetting} from "../../utils/wx-utils/wx-base-utils";
+import {getSetting, requestPayment, wxLogin} from "../../utils/wx-utils/wx-base-utils";
 import {RoomInfoData} from "../../data/room-info-data";
+import {debounceForFunction} from "../../utils/time-utils/time-utils";
 
 const webimhandler = require('../../pages/components/mlvb-live-room/webim_handler');
 const liveroom = require('../../pages/components/mlvb-live-room/mlvbliveroomcore.js');
@@ -14,6 +15,9 @@ let roseNumber = 0
 let roseTimeHandle = null
 let isShowTag = true
 let showPopLastTime = 0
+let timeHandler = null
+let time = 0
+let payInfo = null
 
 Component({
     component: null,
@@ -31,12 +35,14 @@ Component({
         preLinkInfo: {type: Object, value: {}},
         canLink: {type: Boolean, value: false},
         casterCloseLinkNumber: {type: Number, value: 0},
-        roomData: {type: Object, value: {}}
+        roomData: {type: Object, value: {}},
+        enterRoomList: {type: Array, value: []},
+        linkMicPrice: {type: Object, value: {}}
     },
 
     observers: {
-        "roomTextList": function(roomTextList) {
-            if(roomTextList && roomTextList.length) {
+        "roomTextList": function (roomTextList) {
+            if (roomTextList && roomTextList.length) {
                 const id = `text-${roomTextList.length - 1}`
                 this.setData({
                     toIndex: id
@@ -78,7 +84,7 @@ Component({
                     show: false
                 })
                 wx.showModal({
-                    content: '老师拒绝了您的连麦',
+                    content: '老师拒绝了您的连麦，请重新申请',
                     showCancel: false
                 })
                 this.onCancelLink()
@@ -126,6 +132,29 @@ Component({
                     }
                 })
             }
+        },
+
+        "enterRoomList": function (enterRoomList) {
+            if (enterRoomList && enterRoomList.length) {
+                this.setData({
+                    showOnceTag: true,
+                    onceTagList: enterRoomList
+                })
+            }
+        },
+
+        "requestLinkOk": function (requestLinkOk) {
+            if (requestLinkOk) {
+                if (!timeHandler) {
+                    this.loopTime()
+                }
+            } else {
+                if (timeHandler) {
+                    clearTimeout(timeHandler)
+                    timeHandler = null
+                    time = 0
+                }
+            }
         }
     },
 
@@ -148,7 +177,13 @@ Component({
         needSelectTag: false,
         selectTagList: [],
         selectedIds: [],
-        showPop: false
+        showPop: false,
+        showOnceTag: false,
+        selectOnceTagIds: [],
+        onceTagList: [],
+        toUsers: [],
+        timeDes: '',
+        prePayShow: false
     },
 
     lifetimes: {
@@ -161,6 +196,20 @@ Component({
      * 组件的方法列表
      */
     methods: {
+        loopTime() {
+            timeHandler = setTimeout(() => {
+                time++
+                let timeDes = ''
+                timeDes = time / 60
+                timeDes = parseInt(timeDes.toString()) + ' 分 '
+                const secend = time % 60
+                timeDes = timeDes + secend + ' 秒 '
+                this.setData({
+                    timeDes: timeDes
+                })
+                this.loopTime()
+            } ,1000)
+        },
         onConfirm(event) {
             const text = event.detail
             if (!text) {
@@ -169,7 +218,17 @@ Component({
             this.setData({
                 value: ''
             })
-            this.triggerEvent('sendTextMsgEvent', {text: text})
+            const params = {
+                text: text
+            }
+            if (this.data.toUsers && this.data.toUsers.length) {
+                const toUsersTemp = this.data.toUsers.filter(item => item.selected)
+                const toName = toUsersTemp[0].nickname
+                if (toName && toName !== '老师') {
+                    params.toName = toName
+                }
+            }
+            this.triggerEvent('sendTextMsgEvent', params)
         },
         onFocus(event) {
             const keyBoardHeight = event.detail.height
@@ -178,8 +237,35 @@ Component({
             })
         },
         onClickInput() {
+            const toUsersTemp = roomInfoData.getRoomInfo().toUsers
+            if (this.data.toUsers && this.data.toUsers.length) {
+                if (this.data.toUsers[0].nickname === toUsersTemp[0]) {
+                    this.setData({
+                        focusInput: true
+                    })
+                } else {
+                    this.refreshToName(toUsersTemp)
+                }
+            } else {
+                this.refreshToName(toUsersTemp)
+            }
+        },
+        refreshToName(toUsersTemp) {
+            const toUsers = []
+            toUsersTemp.forEach((item, index) => {
+                const toUsersItem = {
+                    id: index,
+                    nickname: item,
+                    selected: false
+                }
+                toUsers.push(toUsersItem)
+            })
+            if (toUsers.length) {
+                toUsers[0].selected = true
+            }
             this.setData({
-                focusInput: true
+                focusInput: true,
+                toUsers: toUsers
             })
         },
         onBlur() {
@@ -221,7 +307,7 @@ Component({
         onLinkTeacher() {
             if (!this.data.canLink) {
                 wx.showModal({
-                    content: '老师尚未开启连麦，开启后可免费申请和老师视频连麦哦',
+                    content: '老师尚未开启连麦，开启后可申请和老师视频连麦哦',
                     showCancel: false
                 })
                 return
@@ -243,7 +329,7 @@ Component({
             Promise.all([getSetting('scope.record'), getSetting('scope.camera')]).then(res => {
                 if (res && res[0] && res[1]) {
                     this.updateLinkWiteList()
-                    this.setData({ show: true });
+                    this.setData({show: true});
                 } else {
                     wx.showModal({
                         content: '请打开小程序设置中的摄像头、麦克风权限才能连麦成功',
@@ -273,7 +359,7 @@ Component({
                 this.setData({
                     linkWiteList: linkWiteList ? linkWiteList : []
                 })
-                if(setInWiteFalse) {
+                if (setInWiteFalse) {
                     this.setData({
                         inWite: false
                     })
@@ -317,10 +403,15 @@ Component({
             roomService.linkmicPop(userBase.getGlobalData().sessionId, userBase.getGlobalData().roomId).then(() => {
                 isShowTag = true
                 this.updateLinkWiteList(true)
-            }).catch(() => {})
+            }).catch(() => {
+            })
         },
+
         onCloseSheet() {
-            this.setData({ show: false });
+            this.setData({
+                show: false,
+                focusInput: false
+            });
         },
 
         onCallDown() {
@@ -334,20 +425,10 @@ Component({
             const selectTagList = this.data.selectTagList
             selectTagList.forEach(item => {
                 if (item.id === itemInfo.id) {
-                    item.selected = !item.selected
-                    if (item.selected) {
-                        if (selectedIds.length < 2) {
-                            selectedIds.push(item.id)
-                        } else {
-                            item.selected = !item.selected
-                            wx.showModal({
-                                content: '最多选 2 个症状',
-                                showCancel: false
-                            })
-                        }
-                    } else {
-                        selectedIds = selectedIds.filter(id => id !== item.id)
-                    }
+                    item.selected = true
+                    selectedIds = [item.id]
+                } else {
+                    item.selected = false
                 }
             })
             this.setData({
@@ -359,6 +440,12 @@ Component({
         onClosePop() {
             this.setData({
                 showPop: false
+            })
+        },
+
+        onCloseOnceTag() {
+            this.setData({
+                showOnceTag: false
             })
         },
 
@@ -386,6 +473,151 @@ Component({
                     content: '提交失败，请重试',
                     showCancel: false
                 })
+            })
+        },
+
+        onSelectOnceTag(event) {
+            const itemInfo = event.currentTarget.dataset.value
+            const onceTagList = this.data.onceTagList
+            let selectOnceTagIds = []
+            onceTagList.forEach(item => {
+                if (item.id === itemInfo.id) {
+                    if (item.selected) {
+                        item.selected = false
+                    } else {
+                        item.selected = true
+                        selectOnceTagIds = [itemInfo.id]
+                    }
+                } else {
+                    item.selected = false
+                }
+            })
+            this.setData({
+                onceTagList: onceTagList,
+                selectOnceTagIds: selectOnceTagIds
+            })
+        },
+
+        onConmitOnceTag() {
+            if (this.data.selectOnceTagIds && this.data.selectOnceTagIds.length) {
+                this.setData({
+                    showOnceTag: false
+                })
+                roomService.savetags(userBase.getGlobalData().sessionId, roomInfoData.getRoomInfo().groupId, this.data.selectOnceTagIds).then(() => {}).catch(() => {
+                    setTimeout(() => {
+                        this.retryCommitTag()
+                    }, 1000)
+                })
+            } else {
+                wx.showModal({
+                    content: '请选一个颜色来代表您今天的心情哦',
+                    showCancel: false
+                })
+            }
+        },
+
+        retryCommitTag() {
+            roomService.savetags(userBase.getGlobalData().sessionId, roomInfoData.getRoomInfo().groupId, this.data.selectOnceTagIds).then(() => {}).catch(() => {})
+        },
+
+        onSelectToUser(event) {
+            const itemInfo = event.currentTarget.dataset.value
+            const toUsers = this.data.toUsers
+            toUsers.forEach(item => {
+                if (item.id === itemInfo.id) {
+                    item.selected = true
+                } else {
+                    item.selected = false
+                }
+            })
+            this.setData({
+                toUsers: toUsers
+            })
+        },
+
+        none() {
+
+        },
+
+        onClosePrePayShow() {
+            this.setData({
+                prePayShow: false
+            })
+            payInfo = null
+        },
+
+        onToPay() {
+            if (debounceForFunction(15000)) {
+                return
+            }
+            if (payInfo) {
+                requestPayment(payInfo).then(() => {
+                    this.payOk()
+                }).catch(() => {})
+            } else {
+                this.newPayStep()
+            }
+        },
+
+        newPayStep() {
+            wxLogin().then(codeRes => {
+                const code = codeRes.code
+                const sessionId = userBase.getGlobalData().sessionId
+                const pid = this.data.linkMicPrice.pid
+                const extData = {
+                    roomId: userBase.getGlobalData().roomId
+                }
+                return roomService.getRoomPayInfo(sessionId, code, pid, JSON.stringify(extData))
+            }).then(res => {
+                payInfo = res
+                requestPayment(res).then(() => {
+                    this.payOk()
+                }).catch(() => {})
+            })
+        },
+
+        payOk() {
+          // 支付成功
+            this.onClosePrePayShow()
+            const linkMicPrice = this.data.linkMicPrice
+            linkMicPrice.tips = 0
+            this.setData({
+                linkMicPrice: linkMicPrice
+            })
+
+            if(!this.data.canLink) {
+                wx.showModal({
+                    title: '支付成功',
+                    content: '老师还未开启连麦权限，老师开启后就能申请连麦啦，老师会按顺序选取接听，请耐心等候！若没有被接听或中途中断，可以联系小江班主任退款哦！',
+                    showCancel: false
+                })
+            } else {
+                wx.showModal({
+                    title: '支付成功',
+                    content: '现在可以申请连麦啦，老师会按顺序选取接听，请耐心等候！若没有被接听或中途中断，可以联系小江班主任退款哦！',
+                    showCancel: false,
+                    success: () => {
+                        this.onLinkTeacher()
+                    }
+                })
+            }
+        },
+
+        onPrePay() {
+            this.setData({
+                prePayShow: true
+            })
+
+            wxLogin().then(codeRes => {
+                const code = codeRes.code
+                const sessionId = userBase.getGlobalData().sessionId
+                const pid = this.data.linkMicPrice.pid
+                const extData = {
+                    roomId: userBase.getGlobalData().roomId
+                }
+                return roomService.getRoomPayInfo(sessionId, code, pid, JSON.stringify(extData))
+            }).then(res => {
+                payInfo = res
             })
         }
     }

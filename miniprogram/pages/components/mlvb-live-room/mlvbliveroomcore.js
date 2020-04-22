@@ -481,6 +481,7 @@ function receiveMsg(msg) {
         } else if (contentObj.cmd == 'CustomTextMsg') {
             msg.userName = contentObj.data.nickName;
             msg.userAvatar = contentObj.data.headPic;
+            msg.toName = contentObj.data.toName
             var content = '';
             for (var i = 1; i < newContent.length; i++) {
                 if (i == newContent.length - 1)
@@ -494,7 +495,8 @@ function receiveMsg(msg) {
                 userName: msg.userName,
                 userAvatar: msg.userAvatar,
                 message: msg.content,
-                time: msg.time
+                time: msg.time,
+                toName: msg.toName
             });
         } else if (contentObj.cmd == 'CustomCmdMsg') {
             msg.userName = contentObj.data.nickName;
@@ -752,7 +754,7 @@ function sendRoomTextMsg(options) {
         return;
     }
     webimhandler.sendCustomMsg({
-        data: '{"cmd":"CustomTextMsg","data":{"nickName":"' + accountInfo.userName + '","headPic":"' + accountInfo.userAvatar + '"}}',
+        data: '{"cmd":"CustomTextMsg","data":{"nickName":"' + accountInfo.userName + '","headPic":"' + accountInfo.userAvatar + '","toName":"' + options.data.toName + '"}}',
         text: options.data.msg
     }, function () {
         options.success && options.success();

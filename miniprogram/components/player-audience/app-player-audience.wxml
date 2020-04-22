@@ -31,20 +31,43 @@
                              scroll-with-animation="{{true}}" enable-back-to-top="{{true}}">
                     <view class="live-text-item" wx:for="{{roomTextList}}" wx:for-item="item" wx:for-index="index"
                           wx:key="index" id="text-{{index}}">
-                        <text wx:if="{{item.userName}}">{{item.userName}}：</text>
+                        <text class="text-toname" wx:if="{{item.userName && item.toName}}">{{item.userName}}</text>
+                        <text wx:if="{{item.userName && item.toName}}" class="text-msg">对</text>
+                        <text wx:if="{{item.userName && item.toName}}" class="text-toname">{{item.toName}}</text>
+                        <text wx:if="{{item.userName && item.toName}}" class="text-msg">说：</text>
+                        <text wx:elif="{{item.userName}}">{{item.userName}}：</text>
                         <text class="text-msg">{{item.message}}</text>
                     </view>
                 </scroll-view>
             </view>
 
             <view wx:if="{{!requestLinkOk}}" class="f-js-ac">
-                <view class="input-temp" bindtap="onClickInput">
+                <view class="input-temp" catch:tap="onClickInput">
                     输入讨论内容或提问
                 </view>
+                <view class="link-btn">
+                    <view wx:if="{{linkMicPrice.tips && linkMicPrice.salesFee}}" class="pre-link f-c-jc-ac" bindtap="onPrePay">
+                        <view class="pay-info-text">
+                            连线老师
+                        </view>
+                    </view>
+                    <view wx:else class="pre-link f-jc-ac" catch:tap="onLinkTeacher">
+                        {{canLink ? '申请连麦' : '暂停连麦中'}}
+                    </view>
 
-                <view class="pre-link f-jc-ac" catch:tap="onLinkTeacher">{{canLink ? '申请连麦' : '暂停连麦中'}}</view>
+
+                    <view wx:if="{{linkMicPrice.tips && linkMicPrice.salesFee}}" class="price-pup-info">
+                        <image class="price-pup-img" lazy-load="{{true}}"
+                               src="cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/price-pup.png"></image>
+                        <view class="price-text f-c-jc-ac">
+                            <view wx:if="{{linkMicPrice.orignalFee > linkMicPrice.salesFee}}" class="old-price">原价{{linkMicPrice.orignalFee / 100}}元</view>
+                            <view class="new-price">{{linkMicPrice.salesFee ? (linkMicPrice.salesFee / 100 + '元') : '限时免费' }}</view>
+                        </view>
+                    </view>
+                </view>
             </view>
-            <view wx:if="{{requestLinkOk}}" class="call-down f-jc-ac">
+            <view wx:if="{{requestLinkOk}}" class="call-down f-c-jc-ac">
+                <view class="time-des f-jc-ac">已接通 {{timeDes}}</view>
                 <view class="call-down-btn f-jc-ac" catch:tap="onCallDown">挂断</view>
             </view>
         </view>
@@ -53,9 +76,17 @@
         </view>
     </view>
 
-    <view hidden="{{!focusInput}}" class="real-input f-jc-ac" style="bottom: {{keyBoardHeight}}px">
+    <view hidden="{{!focusInput}}" class="real-input f-c-jc-as" style="bottom: {{keyBoardHeight}}px" catch:tap="none">
+        <view wx:if="{{toUsers.length}}" class="to-who-speak f-js-ac">
+            <view wx:for="{{toUsers}}" wx:for-item="item" wx:for-index="index" wx:key="index" class="speak-item f-jc-ac"
+                  style="background: {{item.selected ? 'rgba(51,51,51,1)' : 'rgba(222,222,222,1)'}}; color: {{ item.selected ? 'rgba(255,255,255,1)' : 'rgba(184,184,184,1)'}};"
+                  catch:tap="onSelectToUser" data-value="{{item}}">
+                对{{item.nickname ? item.nickname : '连麦者'}}说
+            </view>
+        </view>
         <van-field
                 class="real-input-border"
+                hold-keyboard="{{true}}"
                 focus="{{focusInput}}"
                 confirm-type="send"
                 adjust-position="{{false}}"
@@ -73,13 +104,16 @@
     <van-action-sheet bgColor="{{bgColor}}" show="{{ show }}" overlay="{{false}}" bind:close="onCloseSheet">
         <view wx:if="{{!inCallLink}}" class="sheet-content f-c-je-ac">
             <view class="sheet-title f-c-jc-as">
-                <view>{{needSelectTag ? '告诉我们您想调理的症状' : '和老师连线'}}</view>
-                <view wx:if="{{!needSelectTag}}" class="sub-sheet-text">您前边还有 {{inWite ? index : linkWiteList.length}} 人</view>
+                <view>{{needSelectTag ? '您今天想聊聊什么话题呢？' : '和老师连线'}}</view>
+                <view wx:if="{{!needSelectTag}}" class="sub-sheet-text">您前边还有 {{inWite ? index : linkWiteList.length}}
+                    人
+                </view>
                 <view wx:if="{{needSelectTag}}" class="sub-sheet-text">更容易优先被老师选中哦！</view>
             </view>
             <view wx:if="{{!linkWiteList.length && !needSelectTag}}" class="sheet-sub-tip">快和老师当面聊聊吧...</view>
             <view wx:elif="{{!needSelectTag}}" class="link-content">
-                <view wx:for="{{linkWiteList}}" wx:for-item="item" wx:for-index="index" wx:key="index" class="user-link-item f-jb-ac">
+                <view wx:for="{{linkWiteList}}" wx:for-item="item" wx:for-index="index" wx:key="index"
+                      class="user-link-item f-jb-ac">
                     <view class="f-js-ac">
                         <view class="item-order">{{item.order}}</view>
                         <image class="item-user-img" src="{{item.avatar}}"></image>
@@ -89,10 +123,15 @@
                 </view>
             </view>
             <view wx:else class="link-content f-js-as-w">
-                <view wx:for="{{selectTagList}}" wx:for-item="item" wx:for-index="index" wx:key="index" class="link-tag" style="background: {{item.selected ? 'rgba(255,255,255,1)' : ''}}; color: {{item.selected ? '#000000' : '#FFFFFF'}};" catch:tap="onSelectTag" data-value="{{item}}">{{item.tagName}}</view>
+                <view wx:for="{{selectTagList}}" wx:for-item="item" wx:for-index="index" wx:key="index" class="link-tag"
+                      style="background: {{item.selected ? 'rgba(255,255,255,1)' : ''}}; color: {{item.selected ? '#000000' : '#FFFFFF'}};"
+                      catch:tap="onSelectTag" data-value="{{item}}">{{item.tagName}}
+                </view>
             </view>
-            <view wx:if="{{needSelectTag}}" class="cancel-sheet f-jc-ac" catch:tap="onClickQuestion" style="background-color: {{selectedIds.length ? '#EC4B57' : '#959595'}}">选好了，申请连麦</view>
-            <view wx:elif="{{!inWite}}" class="hidden-close-sheet f-jc-ac" catch:tap="onClickLink">免费连线</view>
+            <view wx:if="{{needSelectTag}}" class="cancel-sheet f-jc-ac" catch:tap="onClickQuestion"
+                  style="background-color: {{selectedIds.length ? '#EC4B57' : '#959595'}}">选好了，申请连麦
+            </view>
+            <view wx:elif="{{!inWite}}" class="hidden-close-sheet f-jc-ac" catch:tap="onClickLink">连线老师</view>
             <view wx:if="{{inWite}}" class="cancel-sheet f-jc-ac" catch:tap="onCancelLink">取消连线</view>
         </view>
         <view wx:if="{{inCallLink}}" class="sheet-content f-c-je-ac">
@@ -104,10 +143,48 @@
 
     <van-popup show="{{ showPop }}" bind:close="onClosePop">
         <view class="pop-content f-c-jb-ac">
-            <view class="pop-text">本次调理方案对您有帮助吗？</view>
+            <view class="pop-text">此次连麦沟通对您有帮助吗？</view>
             <view class="f-jb-ac">
                 <view class="no-help f-jc-ac" bindtap="onNoHelp">没帮助</view>
                 <view class="can-help f-jc-ac" bindtap="onCanHelp">有帮助</view>
+            </view>
+        </view>
+    </van-popup>
+
+    <van-popup round="{{true}}" show="{{showOnceTag}}">
+        <view class="tag-content">
+            <image class="once-tag-img" lazy-load="{{true}}"
+                   src="cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/once-tag-img.png"></image>
+            <view class="once-tag-content">
+                <view class="tag-title">选一种颜色</view>
+                <view class="tag-title">代表您今天的心情吧</view>
+                <view class="tag-list f-js-as-w">
+                    <view wx:for="{{onceTagList}}" wx:for-item="item" wx:for-index="index" wx:key="index"
+                          class="once-tag-item"
+                          style="background: {{item.tagName}}; opacity: {{!item.selected && selectOnceTagIds.length ? 0.6 : 1}}"
+                          bindtap="onSelectOnceTag" data-value="{{item}}">
+                        <image hidden="{{!item.selected}}" class="select-once-tag-img"
+                               src="cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/select-once-tag.png"></image>
+                    </view>
+                </view>
+                <view class="f-jc-ac">
+                    <button class="tag-select-btn f-jc-ac"
+                            style="border: {{selectOnceTagIds.length ? '2rpx solid rgba(51,51,51,1)' : '2rpx solid rgba(192,192,192,1)'}}; color: {{selectOnceTagIds.length ? 'rgba(51,51,51,1)' : 'rgba(192,192,192,1)'}}"
+                            bindtap="onConmitOnceTag">
+                        {{selectOnceTagIds.length ? '就这个了' : '选一个吧'}}
+                    </button>
+                </view>
+            </view>
+        </view>
+    </van-popup>
+
+    <van-popup round="{{true}}" show="{{prePayShow}}" bind:close="onClosePrePayShow">
+        <view class="pre-pay-content">
+            <image class="pre-pay-img" src="cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/pre-pay-img.png"></image>
+            <view class="pre-pay-info f-c-js-ac">
+                <view class="pre-pay-title">{{linkMicPrice.salesFee / 100}}元连麦</view>
+                <view class="pre-pay-text">支付后申请和老师连麦，若这节课没有被接听或中途中断，请联系小江班主任退款！</view>
+                <button class="to-pay-btn f-jc-ac" hover-class="other-button-hover" bindtap="onToPay">支付后申请连麦</button>
             </view>
         </view>
     </van-popup>
