@@ -223,7 +223,7 @@ Component({
             }
             if (this.data.toUsers && this.data.toUsers.length) {
                 const toUsersTemp = this.data.toUsers.filter(item => item.selected)
-                const toName = toUsersTemp[0].nickname
+                const toName = toUsersTemp[0].nickname ? toUsersTemp[0].nickname : '连麦者'
                 if (toName && toName !== '老师') {
                     params.toName = toName
                 }
