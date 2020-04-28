@@ -59,6 +59,10 @@ var RoomServiceUrl = "https://liveroom.qcloud.com/weapp/live_room/",
         }, //大主播收到小主播连麦请求通知
         onKickoutJoinAnchor: function () {
         }, //小主播被踢通知
+        onCasterAccept: function () {
+        }, // 主播接受连麦
+        onCasterReject: function () {
+        }, // 主播拒绝连麦
         onRecvRoomCustomMsg: function () {
         }, //自定义消息通知
         onSketchpadData: function () {
@@ -398,14 +402,6 @@ function receiveMsg(msg) {
         msg.fromAccountNick = '';
         msg.content = msg.content.split(';');
         msg.content = msg.content[0];
-        // event.onRecvRoomTextMsg && event.onRecvRoomTextMsg({
-        //     roomID: roomInfo.roomID,
-        //     userID: msg.fromAccountNick,
-        //     userName: msg.userName,
-        //     userAvatar: msg.userAvatar,
-        //     message: msg.content,
-        //     time: msg.time
-        // });
     } else {
         var contentObj, newContent;
         try {
@@ -413,9 +409,7 @@ function receiveMsg(msg) {
             contentObj = JSON.parse(newContent[0] + '}}');
         } catch (e) {
             console.warn("IM消息解析异常，重新按json格式解析");
-            newContent = new Array(1);
-            newContent[0] = msg.content;
-            contentObj = JSON.parse(msg.content);
+            return
         }
         if (contentObj.cmd === 'AudienceEnterRoom') {
             msg.userName = contentObj.data.nickName;
@@ -581,28 +575,35 @@ function emitUserImgUpdateMsg() {
 
 function recvC2CMsg(msg) {
     console.log("收到C2C消息:", JSON.stringify(msg));
-    var contentObj = JSON.parse(msg.content);
+    let contentObj
+    try {
+        contentObj = JSON.parse(msg.content);
+    } catch (e) {
+        return
+    }
     if (contentObj) {
-        if (contentObj.cmd == 'linkmic') {
-            if (contentObj.data.type && contentObj.data.type == 'request') {
+        if (contentObj.cmd === 'linkmic') {
+            if (contentObj.data.type && contentObj.data.type === 'request') {
                 event.onRequestJoinAnchor({
                     userID: msg.fromAccountNick,
                     userName: contentObj.data.userName,
                     userAvatar: contentObj.data.userAvatar
                 })
-            } else if (contentObj.data.type && contentObj.data.type == 'response') {
-                if (contentObj.data.result == 'accept') {
-                    requestJoinCallback && requestJoinCallback({
-                        errCode: 0,
-                        errMsg: ''
-                    });
-                } else if (contentObj.data.result == 'reject') {
-                    requestJoinCallback && requestJoinCallback({
-                        errCode: -999,
-                        errMsg: '主播拒绝了你的请求'
-                    });
+            } else if (contentObj.data.type && contentObj.data.type === 'response') {
+                if (contentObj.data.result === 'accept') {
+                    const sendTime = contentObj.data.sendTime
+                    const nowTime = new Date().getTime()
+                    if ((nowTime - sendTime) < 25000) {
+                        event.onCasterAccept && event.onCasterAccept()
+                    }
+                } else if (contentObj.data.result === 'reject') {
+                    const sendTime = contentObj.data.sendTime
+                    const nowTime = new Date().getTime()
+                    if ((nowTime - sendTime) < 25000) {
+                        event.onCasterReject && event.onCasterReject()
+                    }
                 }
-            } else if (contentObj.data.type && contentObj.data.type == 'kickout') {
+            } else if (contentObj.data.type && contentObj.data.type === 'kickout') {
                 event.onKickoutJoinAnchor && event.onKickoutJoinAnchor({
                     roomID: contentObj.data.roomID
                 });
@@ -942,6 +943,10 @@ function setListener(options) {
     event.onRequestJoinAnchor = options.onRequestJoinAnchor || function () {
     };
     event.onKickoutJoinAnchor = options.onKickoutJoinAnchor || function () {
+    };
+    event.onCasterAccept = options.onCasterAccept || function () {
+    };
+    event.onCasterReject = options.onCasterReject || function () {
     };
     event.onRecvRoomCustomMsg = options.onRecvRoomCustomMsg || function () {
     };
@@ -1347,8 +1352,8 @@ function quitJoinAnchor(options) {
     roomInfo.hasJoinAnchor = false;
 }
 
-function requestJoinAnchor(object) {
-    var body = {
+function requestJoinAnchor(time = 0) {
+    const body = {
         cmd: 'linkmic',
         data: {
             type: 'request',
@@ -1360,24 +1365,72 @@ function requestJoinAnchor(object) {
         }
     }
 
-    requestJoinCallback = function (ret) {
-        if (ret.errCode) {
-            object.fail && object.fail(ret);
-        } else {
-            object.success && object.success(ret);
+    const msg = {
+        data: JSON.stringify(body)
+    }
+    if (!time) {
+        webimhandler.sendC2CCustomMsg(roomInfo.roomCreator, msg, function (ret) {
+            if (ret && ret.errCode) {
+                console.log('请求连麦失败:', JSON.stringify(ret));
+                setTimeout(() => {
+                    requestJoinAnchor(100)
+                }, 100)
+                return;
+            }
+        });
+    } else if (time < 801) {
+        webimhandler.sendC2CCustomMsg(roomInfo.roomCreator, msg, function (ret) {
+            if (ret && ret.errCode) {
+                console.log('请求连麦失败:', JSON.stringify(ret));
+                setTimeout(() => {
+                    requestJoinAnchor(time * 2)
+                }, time * 2)
+                return;
+            }
+        });
+    }
+}
+
+/**
+ * 取消连麦
+ */
+function cancelLink(time = 0) {
+    const body = {
+        cmd: 'linkmic',
+        data: {
+            type: 'cancel',
+            roomID: roomInfo.roomID,
+            userID: accountInfo.userID,
+            userName: accountInfo.userName,
+            userAvatar: accountInfo.userAvatar,
+            timestamp: Math.round(Date.now()) - mTimeDiff
         }
     }
 
-    var msg = {
+    const msg = {
         data: JSON.stringify(body)
     }
-    webimhandler.sendC2CCustomMsg(roomInfo.roomCreator, msg, function (ret) {
-        if (ret && ret.errCode) {
-            console.log('请求连麦失败:', JSON.stringify(ret));
-            requestJoinCallback && requestJoinCallback(ret);
-            return;
-        }
-    });
+    if (!time) {
+        webimhandler.sendC2CCustomMsg(roomInfo.roomCreator, msg, function (ret) {
+            if (ret && ret.errCode) {
+                console.log('取消连麦失败:', JSON.stringify(ret));
+                setTimeout(() => {
+                    cancelLink(100)
+                }, 100)
+                return;
+            }
+        });
+    } else if (time < 801) {
+        webimhandler.sendC2CCustomMsg(roomInfo.roomCreator, msg, function (ret) {
+            if (ret && ret.errCode) {
+                console.log('取消连麦失败:', JSON.stringify(ret));
+                setTimeout(() => {
+                    cancelLink(time * 2)
+                }, time * 2)
+                return;
+            }
+        });
+    }
 }
 
 function acceptJoinAnchor(object) {
@@ -1742,6 +1795,7 @@ module.exports = {
     joinAnchor: joinAnchor,			//加入连麦
     quitJoinAnchor: quitJoinAnchor, //退出连麦
     requestJoinAnchor: requestJoinAnchor,
+    cancelLink: cancelLink,
     acceptJoinAnchor: acceptJoinAnchor,
     rejectJoinAnchor: rejectJoinAnchor,
     kickoutJoinAnchor: kickoutJoinAnchor,

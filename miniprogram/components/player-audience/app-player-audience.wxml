@@ -76,10 +76,10 @@
         </view>
     </view>
 
-    <view hidden="{{!focusInput}}" class="real-input f-c-jc-as" style="bottom: {{keyBoardHeight}}px" catch:tap="none">
+    <view hidden="{{!focusInput}}" class="real-input f-c-jc-as" style="bottom:{{keyBoardHeight}}px" catch:tap="none">
         <view wx:if="{{toUsers.length}}" class="to-who-speak f-js-ac">
             <view wx:for="{{toUsers}}" wx:for-item="item" wx:for-index="index" wx:key="index" class="speak-item f-jc-ac"
-                  style="background: {{item.selected ? 'rgba(51,51,51,1)' : 'rgba(222,222,222,1)'}}; color: {{ item.selected ? 'rgba(255,255,255,1)' : 'rgba(184,184,184,1)'}};"
+                  style="background:{{item.selected ? 'rgba(51,51,51,1)' : 'rgba(222,222,222,1)'}}; color:{{ item.selected ? 'rgba(255,255,255,1)' : 'rgba(184,184,184,1)'}};"
                   catch:tap="onSelectToUser" data-value="{{item}}">
                 对{{item.nickname ? item.nickname : '连麦者'}}说
             </view>
@@ -101,17 +101,17 @@
         />
     </view>
 
-    <van-action-sheet bgColor="{{bgColor}}" show="{{ show }}" overlay="{{false}}" bind:close="onCloseSheet">
+    <van-action-sheet bgColor="{{bgColor}}" show="{{ show && canLink }}" overlay="{{false}}" bind:close="onCloseSheet">
         <view wx:if="{{!inCallLink}}" class="sheet-content f-c-je-ac">
             <view class="sheet-title f-c-jc-as">
-                <view>{{needSelectTag ? '您今天想聊聊什么话题呢？' : '和老师连线'}}</view>
-                <view wx:if="{{!needSelectTag}}" class="sub-sheet-text">您前边还有 {{inWite ? index : linkWiteList.length}}
+                <view>{{needSelectTag && !inWite ? '您今天想聊聊什么话题呢？' : '和老师连线'}}</view>
+                <view wx:if="{{needSelectTag && !inWite}}" class="sub-sheet-text">更容易优先被老师选中哦！</view>
+                <view wx:else class="sub-sheet-text">您前边还有 {{inWite ? index : linkWiteList.length}}
                     人
                 </view>
-                <view wx:if="{{needSelectTag}}" class="sub-sheet-text">更容易优先被老师选中哦！</view>
             </view>
             <view wx:if="{{!linkWiteList.length && !needSelectTag}}" class="sheet-sub-tip">快和老师当面聊聊吧...</view>
-            <view wx:elif="{{!needSelectTag}}" class="link-content">
+            <view wx:elif="{{!needSelectTag || inWite}}" class="link-content">
                 <view wx:for="{{linkWiteList}}" wx:for-item="item" wx:for-index="index" wx:key="index"
                       class="user-link-item f-jb-ac">
                     <view class="f-js-ac">
@@ -124,15 +124,17 @@
             </view>
             <view wx:else class="link-content f-js-as-w">
                 <view wx:for="{{selectTagList}}" wx:for-item="item" wx:for-index="index" wx:key="index" class="link-tag"
-                      style="background: {{item.selected ? 'rgba(255,255,255,1)' : ''}}; color: {{item.selected ? '#000000' : '#FFFFFF'}};"
+                      style="background:{{item.selected ? 'rgba(255,255,255,1)' : ''}}; color:{{item.selected ? '#000000' : '#FFFFFF'}};"
                       catch:tap="onSelectTag" data-value="{{item}}">{{item.tagName}}
                 </view>
             </view>
-            <view wx:if="{{needSelectTag}}" class="cancel-sheet f-jc-ac" catch:tap="onClickQuestion"
-                  style="background-color: {{selectedIds.length ? '#EC4B57' : '#959595'}}">选好了，申请连麦
-            </view>
-            <view wx:elif="{{!inWite}}" class="hidden-close-sheet f-jc-ac" catch:tap="onClickLink">连线老师</view>
+
             <view wx:if="{{inWite}}" class="cancel-sheet f-jc-ac" catch:tap="onCancelLink">取消连线</view>
+            <view wx:elif="{{needSelectTag}}" class="cancel-sheet f-jc-ac" catch:tap="onClickQuestion"
+                  style="background-color:{{selectedIds.length ? '#EC4B57' : '#959595'}}">选好了，申请连麦
+            </view>
+            <view wx:else class="hidden-close-sheet f-jc-ac" catch:tap="onClickLink">连线老师</view>
+
         </view>
         <view wx:if="{{inCallLink}}" class="sheet-content f-c-je-ac">
             <view class="in-link-tip">老师通过后就能开始连麦啦</view>
@@ -141,7 +143,7 @@
         </view>
     </van-action-sheet>
 
-    <van-popup show="{{ showPop }}" bind:close="onClosePop">
+    <van-popup show="{{ false }}" bind:close="onClosePop">
         <view class="pop-content f-c-jb-ac">
             <view class="pop-text">此次连麦沟通对您有帮助吗？</view>
             <view class="f-jb-ac">
@@ -161,7 +163,7 @@
                 <view class="tag-list f-js-as-w">
                     <view wx:for="{{onceTagList}}" wx:for-item="item" wx:for-index="index" wx:key="index"
                           class="once-tag-item"
-                          style="background: {{item.tagName}}; opacity: {{!item.selected && selectOnceTagIds.length ? 0.6 : 1}}"
+                          style="background:{{item.tagName}}; opacity:{{!item.selected && selectOnceTagIds.length ? 0.6 : 1}}"
                           bindtap="onSelectOnceTag" data-value="{{item}}">
                         <image hidden="{{!item.selected}}" class="select-once-tag-img"
                                src="cloud://live-house-nodecloud-1.6c69-live-house-nodecloud-1-1301787655/select-once-tag.png"></image>
@@ -169,7 +171,7 @@
                 </view>
                 <view class="f-jc-ac">
                     <button class="tag-select-btn f-jc-ac"
-                            style="border: {{selectOnceTagIds.length ? '2rpx solid rgba(51,51,51,1)' : '2rpx solid rgba(192,192,192,1)'}}; color: {{selectOnceTagIds.length ? 'rgba(51,51,51,1)' : 'rgba(192,192,192,1)'}}"
+                            style="border: {{selectOnceTagIds.length ? '2rpx solid rgba(51,51,51,1)' : '2rpx solid rgba(192,192,192,1)'}}; color:{{selectOnceTagIds.length ? 'rgba(51,51,51,1)' : 'rgba(192,192,192,1)'}}"
                             bindtap="onConmitOnceTag">
                         {{selectOnceTagIds.length ? '就这个了' : '选一个吧'}}
                     </button>

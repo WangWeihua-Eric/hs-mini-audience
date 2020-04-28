@@ -19,6 +19,7 @@
                         roomData="{{roomData}}"
                         enterRoomList="{{enterRoomList}}"
                         linkMicPrice="{{linkMicPrice}}"
+                        rejectNumber="{{rejectNumber}}"
                         bind:switchCameraEvent="onSwitchCameraEvent"
                         bind:casterStartEvent="onCasterStartEvent"
                         bind:mainPushEvent="onMainPushEvent"

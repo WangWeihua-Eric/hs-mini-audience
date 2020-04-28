@@ -34,7 +34,8 @@ Component({
         casterCloseLinkNumber: {type: Number, value: 0},
         roomData: {type: Object, value: {}},
         enterRoomList: {type: Array, value: []},
-        linkMicPrice: {type: Object, value: {}}
+        linkMicPrice: {type: Object, value: {}},
+        rejectNumber: {type: Number, value: 0}
     },
 
     observers: {

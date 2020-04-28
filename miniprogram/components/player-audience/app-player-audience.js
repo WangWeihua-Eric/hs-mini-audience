@@ -37,7 +37,8 @@ Component({
         casterCloseLinkNumber: {type: Number, value: 0},
         roomData: {type: Object, value: {}},
         enterRoomList: {type: Array, value: []},
-        linkMicPrice: {type: Object, value: {}}
+        linkMicPrice: {type: Object, value: {}},
+        rejectNumber: {type: Number, value: 0}
     },
 
     observers: {
@@ -69,7 +70,8 @@ Component({
         "linkPusherInfo": function (linkPusherInfo) {
             if (!linkPusherInfo.url) {
                 this.setData({
-                    requestLinkOk: false
+                    requestLinkOk: false,
+                    inWite: false
                 })
             } else {
                 isShowTag = true
@@ -84,7 +86,7 @@ Component({
                     show: false
                 })
                 wx.showModal({
-                    content: '老师拒绝了您的连麦，请重新申请',
+                    content: '老师拒绝了您的连麦，可等待下次连麦',
                     showCancel: false
                 })
                 this.onCancelLink()
@@ -145,6 +147,7 @@ Component({
 
         "requestLinkOk": function (requestLinkOk) {
             if (requestLinkOk) {
+                this.onCloseSheet()
                 if (!timeHandler) {
                     this.loopTime()
                 }
@@ -154,6 +157,24 @@ Component({
                     timeHandler = null
                     time = 0
                 }
+            }
+        },
+
+        "rejectNumber": function (rejectNumber) {
+            if(rejectNumber) {
+                this.onCloseSheet()
+                wx.showModal({
+                    content: '老师拒绝了您的申请，可等待下次连麦',
+                    showCancel: false
+                })
+            }
+        },
+
+        "canLink": function (canLink) {
+            if (!canLink) {
+                this.setData({
+                    inWite: false
+                })
             }
         }
     },
@@ -312,6 +333,7 @@ Component({
                 })
                 return
             }
+            isShowTag = true
 
             const tagList = roomInfoData.getRoomInfo().tagList
 
@@ -345,25 +367,29 @@ Component({
         },
         updateLinkWiteList(setInWiteFalse = false) {
             roomService.linkmicList(userBase.getGlobalData().sessionId, userBase.getGlobalData().roomId).then(linkWiteList => {
+                let indexTemp = 0
+                let inWite = false
                 if (linkWiteList) {
                     linkWiteList.forEach((item, index) => {
                         if (item.userId === userBase.getGlobalData().userId) {
                             item.order = '我'
-                            this.setData({
-                                inWite: true,
-                                index: index
-                            })
+                            indexTemp = index
+                            inWite = true
                         }
                     })
                 }
                 this.setData({
-                    linkWiteList: linkWiteList ? linkWiteList : []
+                    linkWiteList: linkWiteList ? linkWiteList : [],
+                    inWite: inWite,
+                    index: indexTemp
                 })
                 if (setInWiteFalse) {
                     this.setData({
                         inWite: false
                     })
                 }
+                console.log('1111: ', this.data.needSelectTag)
+                console.log('1111: ', this.data.inWite)
             })
         },
 
@@ -394,15 +420,15 @@ Component({
                 this.updateLinkWiteList()
             }).catch(() => {
                 wx.showModal({
-                    content: '当前连线人数较多，请稍候',
+                    content: '当前申请连线人数较多，请稍候重试',
                     showCancel: false
                 })
             })
         },
         onCancelLink() {
             roomService.linkmicPop(userBase.getGlobalData().sessionId, userBase.getGlobalData().roomId).then(() => {
-                isShowTag = true
-                this.updateLinkWiteList(true)
+                liveroom.cancelLink()
+                this.onLinkTeacher()
             }).catch(() => {
             })
         },

@@ -2,7 +2,7 @@ import {UserBase} from "../../../utils/user-utils/user-base";
 import {RoomService} from "../../../service/roomService";
 import {RoomInfoData} from "../../../data/room-info-data";
 
-var liveroom = require('./mlvbliveroomcore.js');
+const liveroom = require('./mlvbliveroomcore.js');
 const app = getApp()
 
 const roomService = new RoomService()
@@ -103,7 +103,8 @@ Component({
         preLinkInfo: {},
         linkError: false,
         linkOk: false,
-        casterCloseLinkNumber: 0
+        casterCloseLinkNumber: 0,
+        rejectNumber: 0
     },
 
     methods: {
@@ -277,6 +278,8 @@ Component({
                 onRecvRoomTextMsg: self.onRecvRoomTextMsg,
                 onSketchpadData: self.onSketchpadData,
                 onKickoutJoinAnchor: self.onKickoutJoinAnchor,
+                onCasterAccept: self.onCasterAccept,
+                onCasterReject: self.onCasterReject,
                 onRequestJoinAnchor: self.onRequestJoinAnchor,
                 onAnchorExit: self.onAnchorExit,
                 onAnchorEnter: self.onAnchorEnter,
@@ -456,9 +459,6 @@ Component({
             //     detail: pusher
             // })
         },
-        onKickoutJoinAnchor() {
-            console.log('onKickoutJoinAnchor() called')
-        },
         enter() {
             var self = this;
             console.log('enter room width roomid: ', self.data.roomID);
@@ -469,6 +469,8 @@ Component({
                 onAnchorExit: self.onLinkPusherQuit,
                 onAnchorEnter: self.onAnchorEnter,
                 onKickoutJoinAnchor: self.onKickoutJoinAnchor,
+                onCasterAccept: self.onCasterAccept,
+                onCasterReject: self.onCasterReject,
                 onUserImgUpdate: self.onUserImgUpdate,
                 onRoomInfoUpdate: self.onRoomInfoUpdate,
                 onCasterPreLink: self.onCasterPreLink,
@@ -751,46 +753,8 @@ Component({
         },
 
         requestJoinAnchor() {
-            console.log('requestJoinAnchor() called')
-            var self = _this;
-            if (self.data.requestLinking) {
-                wx.showToast({
-                    title: '等待大主播接受连麦',
-                    duration: 1000,
-                })
-                return;
-            }
             console.info('用户请求连麦')
-            self.data.requestLinking = true;
-            self.setData({
-                requestLinkError: false,
-                requestLinkOk: false
-            })
-            liveroom.requestJoinAnchor({
-                success: function (ret) {
-                    self.data.requestLinking = false;
-                    console.log('请求连麦成功: ', ret)
-                    self.setData({
-                        requestLinkOk: true
-                    })
-                    self.link();
-                },
-                fail: function (e) {
-                    console.log('请求连麦失败: ', e)
-
-                    self.setData({
-                        requestLinkError: true
-                    })
-                    roomService.linkmicPop(userBase.getGlobalData().sessionId, userBase.getGlobalData().roomId).then(() => {})
-
-                    self.data.requestLinking = false;
-                    // self.triggerEvent('RoomEvent', {
-                    //     tag: 'error',
-                    //     code: -9004,
-                    //     detail: e.errMsg
-                    // })
-                }
-            });
+            liveroom.requestJoinAnchor();
         },
 
         onLinkError(e) {
@@ -932,6 +896,19 @@ Component({
             self.quitLink();
         },
 
+        onCasterAccept() {
+            const self = _this;
+            self.link();
+        },
+
+        onCasterReject() {
+            const self = _this
+            const rejectNumber = self.data.rejectNumber + 1
+            self.setData({
+                rejectNumber: rejectNumber
+            })
+        },
+
         onPushEvent(code) {
             var self = this;
             switch (code) {
@@ -944,7 +921,6 @@ Component({
                     })
                     break;
                 }
-                    ;
                 case -1302: {
                     console.log('打开麦克风失败: ', code);
                     self.triggerEvent('RoomEvent', {
@@ -954,7 +930,6 @@ Component({
                     })
                     break;
                 }
-                    ;
                 case -1307: {
                     console.error('推流连接断开: ', code);
                     // 推流连接断开就做退房操作
@@ -966,7 +941,6 @@ Component({
                     })
                     break;
                 }
-                    ;
                 case -1305 : {
                     console.log('不支持的视频分辨率');
                     self.triggerEvent('RoomEvent', {
@@ -1012,8 +986,7 @@ Component({
                         detail: '收到5000就退房'
                     })
                     break;
-                }
-                    ;
+                };
                 default: {
                     self.onPushEvent(ret.detail.code);
                     break;

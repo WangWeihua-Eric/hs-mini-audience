@@ -45,6 +45,7 @@
                                      roomData="{{roomData}}"
                                      enterRoomList="{{enterRoomList}}"
                                      linkMicPrice="{{linkMicPrice}}"
+                                     rejectNumber="{{rejectNumber}}"
                                      bind:sendTextMsgEvent="onSendTextMsg"
                                      bind:onCallDown="quitLink"
                                      bind:lintTeacher="onLinkTeacherEvent"></app-player-audience>
